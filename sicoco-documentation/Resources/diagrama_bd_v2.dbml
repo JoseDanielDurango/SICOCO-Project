@@ -1,0 +1,184 @@
+// --- ZONA 1: Usuarios, Roles y Organización Académica ---
+
+Table Estudiante {
+  ID_Estudiante integer [primary key, increment]
+  Numero_Identidad_Matricula varchar [unique]
+  Nombres varchar
+  Apellidos varchar
+  Correo_Institucional varchar [unique]
+  Contraseña_Encriptada varchar
+  Semestre_Actual integer
+  Programa_Academico varchar
+  Fecha_Registro timestamp [default: `now()`]
+}
+
+Table Profesor {
+  ID_Profesor integer [primary key, increment]
+  Numero_Empleado varchar [unique]
+  Nombres varchar
+  Apellidos varchar
+  Correo_Institucional varchar [unique]
+  Departamento varchar
+  Permiso_Sistema integer
+}
+
+Table Curso {
+  ID_Curso integer [primary key, increment]
+  Codigo_Materia varchar
+  Nombre_Materia varchar
+  Semestre_Academico varchar
+  ID_Profesor_Responsable integer
+}
+
+Table Equipo {
+  ID_Equipo integer [primary key, increment]
+  Nombre_Equipo varchar
+  ID_Curso integer
+  Fecha_Creacion timestamp
+}
+
+Table Miembro_Equipo {
+  ID_Relacion integer [primary key, increment]
+  ID_Estudiante integer
+  ID_Equipo integer
+  Rol_En_Equipo varchar
+  Fecha_Union timestamp
+}
+
+// --- ZONA 2: Entradas de Datos y Sesiones ---
+
+Table Sesion_Trabajo {
+  ID_Sesion integer [primary key, increment]
+  ID_Equipo integer
+  Fecha_Reunion timestamp
+  Objetivo_General text
+  Plataforma_Origen varchar
+  Duracion_Estimada integer
+}
+
+Table Registro_Chat {
+  ID_Registro integer [primary key, increment]
+  ID_Sesion integer
+  ID_Estudiante_Ingresa integer
+  Origen_Metadata varchar
+  Formato_Entrada varchar
+  Tamaño_Datos integer
+  Created_At timestamp
+}
+
+Table Mensaje_Original {
+  ID_Mensaje integer [primary key, increment]
+  ID_Registro integer
+  Alias_Remitente varchar
+  Cuerpo_Del_Mensaje text
+  Fecha_Hora_Mensaje timestamp
+}
+
+// --- ZONA 3: Procesamiento de IA y Salidas (MODESEC) ---
+
+Table Configuracion_Prompt {
+  ID_Configuracion integer [primary key, increment]
+  Nombre_Estilo varchar // Ej: Rápido, Formal/Serio
+  Texto_Instruccion_IA text
+  Estado_Activo boolean
+}
+
+Table Resumen_Generado {
+  ID_Resumen integer [primary key, increment]
+  ID_Sesion integer
+  ID_Configuracion integer // NUEVA CONEXIÓN
+  Texto_Final_Plano text
+  Modelo_IA_Usado varchar
+  Consumo_Tokens integer
+  Fecha_Generacion timestamp
+  ID_Editor_Ultimo integer
+  Updated_At timestamp
+}
+
+Table Acuerdo_Equipo {
+  ID_Acuerdo integer [primary key, increment]
+  ID_Resumen integer
+  Descripcion_Solucion text
+  Nivel_Importancia varchar
+  Alias_Quien_Propone varchar
+}
+
+Table Desacuerdo {
+  ID_Desacuerdo integer [primary key, increment]
+  ID_Resumen integer
+  Tema_Debate varchar
+  Descripcion_Oposicion text
+  Estado_Resolucion varchar
+}
+
+Table Duda_Abierta {
+  ID_Duda integer [primary key, increment]
+  ID_Resumen integer
+  Pregunta_Principal text
+  Relacionado_Con_Tema varchar
+}
+
+Table Tarea_Asignada {
+  ID_Tarea integer [primary key, increment]
+  ID_Resumen integer
+  Titulo_Actividad varchar
+  ID_Estudiante_Asignado integer
+  Estatus varchar
+  Fecha_Limite date
+}
+
+// --- ZONA 4: Visualización y Evaluación ---
+
+Table Momento_Clave_Chat {
+  ID_Momento integer [primary key, increment]
+  ID_Resumen integer
+  Marca_Tiempo_Aproximada timestamp
+  ID_Mensaje_Relacionado integer
+  Alias_Usuario varchar
+  Evento varchar
+}
+
+Table Control_Calidad_Bot {
+  ID_Test integer [primary key, increment]
+  ID_Resumen integer
+  Cantidad_Falsos_Positivos integer
+  Calificacion_Fidelidad_Texto integer
+  Comentario_Tecnico text
+}
+
+Table Encuesta_Piloto {
+  ID_Encuesta integer [primary key, increment]
+  ID_Estudiante integer
+  Mejor_Comprension_Objetivos boolean
+  Nivel_Apoyo_Grupo integer
+  Fecha_Respuesta timestamp
+}
+
+// --- RELACIONES (FOREIGN KEYS) ---
+
+Ref: Curso.ID_Profesor_Responsable > Profesor.ID_Profesor
+Ref: Equipo.ID_Curso > Curso.ID_Curso
+Ref: Miembro_Equipo.ID_Estudiante > Estudiante.ID_Estudiante
+Ref: Miembro_Equipo.ID_Equipo > Equipo.ID_Equipo
+Ref: Sesion_Trabajo.ID_Equipo > Equipo.ID_Equipo
+Ref: Registro_Chat.ID_Sesion > Sesion_Trabajo.ID_Sesion
+Ref: Registro_Chat.ID_Estudiante_Ingresa > Estudiante.ID_Estudiante
+Ref: Mensaje_Original.ID_Registro > Registro_Chat.ID_Registro
+Ref: Resumen_Generado.ID_Sesion > Sesion_Trabajo.ID_Sesion
+
+// CONEXIÓN ESTABLECIDA AQUÍ:
+Ref: Resumen_Generado.ID_Configuracion > Configuracion_Prompt.ID_Configuracion
+
+Ref: Acuerdo_Equipo.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Desacuerdo.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Duda_Abierta.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Tarea_Asignada.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Tarea_Asignada.ID_Estudiante_Asignado > Estudiante.ID_Estudiante
+Ref: Momento_Clave_Chat.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Momento_Clave_Chat.ID_Mensaje_Relacionado > Mensaje_Original.ID_Mensaje
+Ref: Control_Calidad_Bot.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Encuesta_Piloto.ID_Estudiante > Estudiante.ID_Estudiante
+
+Ref: "Curso"."ID_Curso" ?<? "Curso"."Nombre_Materia"
+
+Ref: "Curso"."ID_Curso" ?<? "Curso"."ID_Profesor_Responsable"

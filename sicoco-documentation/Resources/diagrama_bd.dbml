@@ -1,0 +1,194 @@
+Table Estudiante {
+  ID_Estudiante integer [primary key]
+  Numero_Identidad_Matricula varchar
+  Nombres varchar
+  Apellidos varchar
+  Correo_Institucional varchar
+  Contraseña_Encriptada varchar
+  Semestre_Actual integer
+  Programa_Academico varchar
+  Fecha_Registro timestamp
+}
+
+Table Profesor {
+  ID_Profesor integer [primary key]
+  Numero_Empleado varchar
+  Nombres varchar
+  Apellidos varchar
+  Departamento varchar
+  Permiso_Sistema integer
+}
+
+Table Curso {
+  ID_Curso integer [primary key]
+  Codigo_Materia varchar
+  Nombre_Materia varchar
+  Semestre_Academico varchar
+  ID_Profesor_Responsable integer
+}
+
+Ref: Curso.ID_Profesor_Responsable > Profesor.ID_Profesor
+
+Table Equipo {
+  ID_Equipo integer [primary key]
+  Nombre_Equipo varchar
+  ID_Curso integer
+  Fecha_Creacion timestamp
+}
+
+Ref: Equipo.ID_Curso > Curso.ID_Curso
+
+Table Miembro_Equipo {
+  ID_Relacion integer [primary key]
+  ID_Estudiante integer
+  ID_Equipo integer
+  Rol_En_Equipo varchar
+  Fecha_Union timestamp
+}
+
+Ref: Miembro_Equipo.ID_Estudiante > Estudiante.ID_Estudiante
+Ref: Miembro_Equipo.ID_Equipo > Equipo.ID_Equipo
+
+Table Sesion_Trabajo {
+  ID_Sesion integer [primary key]
+  ID_Equipo integer
+  Fecha_Reunion timestamp
+  Objetivo_General text
+  Plataforma_Origen varchar
+  Duracion_Estimada integer
+}
+
+Ref: Sesion_Trabajo.ID_Equipo > Equipo.ID_Equipo
+
+Table Registro_Chat {
+  ID_Registro integer [primary key]
+  ID_Sesion integer
+  Origen_Metadata varchar
+  Formato_Entrada varchar
+  Tamaño_Datos integer
+  ID_Estudiante_Ingresa integer
+}
+
+Ref: Registro_Chat.ID_Sesion > Sesion_Trabajo.ID_Sesion
+Ref: Registro_Chat.ID_Estudiante_Ingresa > Estudiante.ID_Estudiante
+
+Table Mensaje_Original {
+  ID_Mensaje integer [primary key]
+  ID_Registro integer
+  Alias_Remitente varchar
+  Cuerpo_Del_Mensaje text
+  Fecha_Hora_Mensaje timestamp
+}
+
+Ref: Mensaje_Original.ID_Registro > Registro_Chat.ID_Registro
+
+Table Configuracion_Prompt {
+  ID_Configuracion integer [primary key]
+  Nombre_Estilo varchar
+  Texto_Instruccion_IA text
+  Estado_Activo boolean
+}
+
+Table Resumen_Generado {
+  ID_Resumen integer [primary key]
+  ID_Sesion integer
+  ID_Configuracion integer
+  Texto_Final_Plano text
+  Modelo_IA_Usado varchar
+  Consumo_Tokens integer
+  Fecha_Generacion timestamp
+}
+
+Ref: Resumen_Generado.ID_Sesion > Sesion_Trabajo.ID_Sesion
+Ref: Resumen_Generado.ID_Configuracion > Configuracion_Prompt.ID_Configuracion
+
+Table Acuerdo_Equipo {
+  ID_Acuerdo integer [primary key]
+  ID_Resumen integer
+  Descripcion_Solucion text
+  Nivel_Importancia varchar
+  Alias_Quien_Propone varchar
+}
+
+Ref: Acuerdo_Equipo.ID_Resumen > Resumen_Generado.ID_Resumen
+
+Table Desacuerdo {
+  ID_Desacuerdo integer [primary key]
+  ID_Resumen integer
+  Tema_Debate varchar
+  Descripcion_Oposicion text
+  Estado_Resolucion varchar
+}
+
+Ref: Desacuerdo.ID_Resumen > Resumen_Generado.ID_Resumen
+
+Table Duda_Abierta {
+  ID_Duda integer [primary key]
+  ID_Resumen integer
+  Pregunta_Principal text
+  Relacionado_Con_Tema varchar
+}
+
+Ref: Duda_Abierta.ID_Resumen > Resumen_Generado.ID_Resumen
+
+Table Tarea_Asignada {
+  ID_Tarea integer [primary key]
+  ID_Resumen integer
+  Titulo_Actividad varchar
+  ID_Estudiante_Asignado integer
+  Estatus varchar
+  Fecha_Limite timestamp
+}
+
+Ref: Tarea_Asignada.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Tarea_Asignada.ID_Estudiante_Asignado > Estudiante.ID_Estudiante
+
+Table Momento_Clave_Chat {
+  ID_Momento integer [primary key]
+  ID_Resumen integer
+  Marca_Tiempo_Aproximada timestamp
+  ID_Mensaje_Relacionado integer
+  Alias_Usuario varchar
+  Evento varchar
+}
+
+Ref: Momento_Clave_Chat.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Momento_Clave_Chat.ID_Mensaje_Relacionado > Mensaje_Original.ID_Mensaje
+
+Table Conexion_Idea {
+  ID_Idea_Base integer
+  ID_Aporte_Extra integer
+}
+
+Ref: Conexion_Idea.ID_Idea_Base > Momento_Clave_Chat.ID_Momento
+Ref: Conexion_Idea.ID_Aporte_Extra > Momento_Clave_Chat.ID_Momento
+
+Table Control_Calidad_Bot {
+  ID_Test integer [primary key]
+  ID_Resumen integer
+  Cantidad_Falsos_Positivos integer
+  Calificacion_Fidelidad_texto integer
+  Comentario_Tecnico text
+}
+
+Ref: Control_Calidad_Bot.ID_Resumen > Resumen_Generado.ID_Resumen
+
+Table Evaluacion_UX {
+  ID_Eval_UX integer [primary key]
+  ID_Estudiante integer
+  Claridad_Visual integer
+  Separacion_Vista_Tareas boolean
+  Sugerencias_Extra text
+}
+
+Ref: Evaluacion_UX.ID_Estudiante > Estudiante.ID_Estudiante
+
+Table Encuesta_Piloto {
+  ID_Encuesta integer [primary key]
+  ID_Estudiante integer
+  Mejor_Comprension_Objetivos boolean
+  Nivel_de_Apoyo_En_Grupo integer
+  Fecha_Respuesta timestamp
+}
+
+Ref: Encuesta_Piloto.ID_Estudiante > Estudiante.ID_Estudiante
