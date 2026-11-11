@@ -6,6 +6,10 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { CoursesModule } from './courses/courses.module.js';
+import { TeamsModule } from './teams/teams.module.js';
+import { SessionsModule } from './sessions/sessions.module.js';
+import { TranscriptsModule } from './transcripts/transcripts.module.js';
+import { SummariesModule } from './summaries/summaries.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -18,7 +22,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/sicoco'),
+        uri: configService.get<string>(
+          'MONGODB_URI',
+          'mongodb://localhost:27017/sicoco',
+        ),
       }),
       inject: [ConfigService],
     }),
@@ -29,6 +36,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
     UsersModule,
     CoursesModule,
+    TeamsModule,
+    SessionsModule,
+    TranscriptsModule,
+    SummariesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

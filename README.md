@@ -83,9 +83,13 @@ SICOCO-Project/
     ├── .env.example               # Plantilla de variables de entorno
     ├── src/
     │   ├── main.ts                # Bootstrap y Swagger UI (/api)
-    │   ├── app.module.ts          # Módulo raíz y conexión MongoDB
+    │   ├── app.module.ts          # Módulo raíz que ensambla los 6 módulos
     │   ├── users/                 # Módulo CRUD de Usuarios
-    │   └── courses/               # Módulo CRUD de Cursos Académicos
+    │   ├── courses/               # Módulo CRUD de Cursos Académicos
+    │   ├── teams/                 # Módulo de Equipos y Miembros Colaborativos
+    │   ├── sessions/              # Módulo de Sesiones de Trabajo
+    │   ├── transcripts/           # Módulo de Ingesta de Transcripciones y Mensajes
+    │   └── summaries/             # Motor de Síntesis MODESEC y Flujo Asíncrono
     └── test/                      # Pruebas de integración E2E
 ```
 

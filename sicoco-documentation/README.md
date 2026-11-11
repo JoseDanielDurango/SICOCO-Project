@@ -90,6 +90,12 @@ En la carpeta [`Resources/`](Resources/):
 ## Repositorio del Framework Backend
 
 La implementación de código fuente se encuentra en el proyecto adjunto **`sicoco-framework`**:
-- **Stack:** NestJS 12, TypeScript, MongoDB / Mongoose, Swagger UI, Vite / Vitest.
+- **Stack:** NestJS 12, TypeScript 6, MongoDB / Mongoose 9, Swagger OpenAPI 3, Vite / Vitest 4.
 - **Ruta de la API Swagger:** `http://localhost:3000/api`
-- **Módulos Activos:** `UsersModule` (`/users`), `CoursesModule` (`/courses`).
+- **Módulos Operacionales (6/6):**
+  1. `UsersModule` (`/users`): Gestión de estudiantes y docentes.
+  2. `CoursesModule` (`/courses`): Asignaturas académicas.
+  3. `TeamsModule` (`/teams`): Equipos colaborativos y asignación de miembros con roles.
+  4. `SessionsModule` (`/sessions`): Sesiones de trabajo y registro de plataforma origen.
+  5. `TranscriptsModule` (`/transcripts`): Ingesta estructurada de mensajes desde scraper DOM.
+  6. `SummariesModule` (`/summaries`): Motor de síntesis MODESEC (4 pilares, `Conexion_Idea` y polling asíncrono con `jobId`).

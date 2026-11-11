@@ -71,12 +71,15 @@ A continuación se presenta el catálogo completo de la documentación del proye
 - Exportación del nuevo diagrama relacional (`SICOCO v2.png` y `diagrama_bd_v2.dbml`).
 
 ### Hito 3: Construcción Física del Backend (`sicoco-framework`)
-A diferencia del semestre anterior, **SICOCO ya cuenta con una base de software funcional y programada**:
+A diferencia del semestre anterior, **SICOCO ya cuenta con una plataforma de software backend funcional y programada con 6 módulos operacionales**:
 - **Framework Empresarial:** Implementación de NestJS 12 con TypeScript moderno y módulos ES (`"type": "module"`).
-- **Capa de Persistencia NoSQL:** Conexión asíncrona a MongoDB mediante Mongoose 9, modelando esquemas y DTOs para `User` y `Course`.
-- **API REST Funcional:** Endpoints CRUD completos y tipados para `/users` y `/courses`.
-- **Documentación Interactiva Automática:** OpenAPI Swagger desplegado en `/api`.
-- **Testing y Calidad de Código:** Adopción de Vite y Vitest v4.1.2 para pruebas unitarias (`*.spec.ts`) y pruebas extremo a extremo (`test/app.e2e-spec.ts`) con supertest, sustituyendo las herramientas lentas convencionales.
+- **Capa de Persistencia NoSQL:** Conexión asíncrona a MongoDB mediante Mongoose 9, modelando esquemas y DTOs estructurados.
+- **Cobertura Completa de Zonas MODESEC:**
+  - **Zona 1 (Organización Académica):** `UsersModule` (`/users`), `CoursesModule` (`/courses`) y `TeamsModule` (`/teams` con subdocumentos `TeamMember` y roles).
+  - **Zona 2 (Sesiones e Ingesta):** `SessionsModule` (`/sessions` con plataformas y estados) y `TranscriptsModule` (`/transcripts` con subdocumentos `ChatMessage` y endpoint de ingesta masiva `/transcripts/:id/messages`).
+  - **Zonas 3 y 4 (Síntesis y Co-creación):** `SummariesModule` (`/summaries`) implementando la estructura completa de los 4 pilares (Acuerdos, Desacuerdos, Dudas, Tareas), la relación reflexiva `Conexion_Idea` en la línea de tiempo (`inspiredByMomentId`) y el flujo asíncrono anti-timeout con `jobId` (`POST /summaries/generate` -> `GET /summaries/job/:jobId`).
+- **Documentación Interactiva Automática:** OpenAPI Swagger desplegado en `/api` con etiquetas organizadas para los 6 módulos.
+- **Testing y Calidad de Código:** Adopción de Vite y Vitest v4.1.2 ejecutando **13 suites de pruebas unitarias (`*.spec.ts`) con 100% de aprobación** y pruebas de extremo a extremo (`test/app.e2e-spec.ts`) con supertest.
 - **Observabilidad:** Integración del módulo de telemetría `@nestjs/observe`.
 
 ---
@@ -85,23 +88,25 @@ A diferencia del semestre anterior, **SICOCO ya cuenta con una base de software 
 
 ### Aportes de la Inteligencia Artificial (Antigravity)
 * **Auditoría de Inconsistencias:** Análisis de esquemas para detectar claves foráneas faltantes y riesgos de concurrencia.
-* **Generación de Código Base de Backend:** Andamiaje de controladores, servicios, DTOs y esquemas en NestJS 12 y Mongoose.
-* **Estandarización de Pruebas:** Migración y configuración de Vitest con mocks de Mongoose para pruebas unitarias y E2E.
+* **Generación de Código Base de Backend:** Andamiaje de controladores, servicios, DTOs y esquemas en NestJS 12 y Mongoose para los 6 módulos (`Users`, `Courses`, `Teams`, `Sessions`, `Transcripts`, `Summaries`).
+* **Implementación del Flujo Asíncrono de Inferencia:** Creación del mecanismo de polling por `jobId` para erradicar el riesgo de HTTP Timeout identificado en el informe U1-01.
+* **Estandarización de Pruebas:** Migración y configuración de Vitest con 13 suites unitarias y pruebas E2E con mocks de Mongoose.
 * **Unificación de Documentación:** Traducción técnica de nomenclatura de archivos al inglés y trazabilidad cruzada.
 
 ### Aportes del Equipo de Trabajo (SICOCO Dev Team)
 * **Definición de Lógica de Negocio y Criterios Académicos:** Ajuste de los formatos U1-01 a los lineamientos del docente Alexander Enrique Toscano Ricardo.
 * **Evaluación Crítica de Decisiones:** Debate y descarte de alternativas en la auditoría técnica (rechazo de la modificación obligatoria de nombres en WhatsApp para preservar la usabilidad).
-* **Validación de Datos Académicos:** Especificación de los modelos de Cursos y Estudiantes para su correspondencia con los planes de estudio de la Universidad de Córdoba.
-* **Configuración de Entorno Local y Pruebas Manuales:** Validación de dependencias Node.js, variables de entorno en `.env` y revisión visual de la interfaz de Swagger.
+* **Validación de Datos Académicos:** Especificación de los modelos de Cursos, Equipos y Estudiantes para su correspondencia con los planes de estudio de la Universidad de Córdoba.
+* **Verificación de los Cuatro Pilares:** Definición de los campos esenciales para Acuerdos, Desacuerdos, Dudas, Tareas y Línea de Tiempo colaborativa.
+* **Configuración de Entorno Local y Pruebas:** Validación de dependencias Node.js, variables de entorno en `.env` y revisión visual de la interfaz de Swagger.
 
 ---
 
 ## 5. Estado Actual del Proyecto y Próximos Pasos
 
-El proyecto SICOCO ha alcanzado con éxito el estado de **backend fundacional operativo**:
-1. **Infraestructura lista:** El servidor NestJS compila y ejecuta peticiones HTTP, almacena y consulta datos en MongoDB y valida contratos mediante Swagger.
+El proyecto SICOCO ha alcanzado con éxito el estado de **backend completo y operativo con 6 módulos funcionales**:
+1. **Infraestructura lista:** El servidor NestJS compila de forma nativa, expone contratos en Swagger OpenAPI (`/api`), almacena y consulta datos en MongoDB y aprueba 13 suites de pruebas automatizadas.
 2. **Próximos entregables del MVP:**
-   - Construcción del módulo de ingesta de transcripciones (`SessionsModule` y parser de archivos/DOM).
-   - Integración del servicio de IA (`AiModule`) con la API de Google Gemini para ejecutar los prompts de extracción de los cuatro pilares (Acuerdos, Desacuerdos, Dudas, Tareas).
-   - Ensamble de la extensión de navegador Chromium que consuma estos servicios y proyecte el Dashboard interactivo.
+   - Conexión del scraper de la extensión Chromium al endpoint `POST /transcripts/:id/messages`.
+   - Conexión de `SummariesService.generate()` con la API de Google Gemini inyectando los prompts pedagógicos de MODESEC.
+   - Ensamble visual de los componentes de la interfaz de usuario del Dashboard.
