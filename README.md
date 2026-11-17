@@ -53,7 +53,7 @@ SICOCO-Project/
 │   │   ├── diagrama_bd_v2.dbml    # Código fuente DBML V2
 │   │   ├── MER - SICOCO.pdf       # Especificación completa en PDF
 │   │   └── Technical Document.docx # Documento Técnico en formato APA 7
-│   └── SICOCO/                    # 18 Documentos formales en inglés (00 al 17)
+│   └── SICOCO/                    # 19 Documentos formales en inglés (00 al 18)
 │       ├── 00_base_document.md
 │       ├── 01_diagnosis.md
 │       ├── 02_pedagogical_design.md
@@ -73,7 +73,8 @@ SICOCO-Project/
 │       ├── 14_technical_design_validation.md
 │       ├── 15_entity_relationship_model_v2.md
 │       ├── 16_backend_architecture_and_api.md
-│       └── 17_second_semester_scope.md
+│       ├── 17_second_semester_scope.md
+│       └── 18_prompt_audit_and_backend_completion.md
 └── sicoco-framework/              # Código fuente del Backend (NestJS + MongoDB)
     ├── package.json
     ├── nest-cli.json
@@ -82,8 +83,10 @@ SICOCO-Project/
     ├── vitest.config.e2e.ts       # Configuración de pruebas E2E
     ├── .env.example               # Plantilla de variables de entorno
     ├── src/
-    │   ├── main.ts                # Bootstrap y Swagger UI (/api)
-    │   ├── app.module.ts          # Módulo raíz que ensambla los 6 módulos
+    │   ├── main.ts                # Bootstrap, Helmet, CORS, ValidationPipe y Swagger UI
+    │   ├── app.module.ts          # Módulo raíz que ensambla los módulos
+    │   ├── auth/                  # Módulo de Autenticación (JWT + bcrypt + RBAC)
+    │   ├── common/                # Filtros globales de excepción (AllExceptionsFilter)
     │   ├── users/                 # Módulo CRUD de Usuarios
     │   ├── courses/               # Módulo CRUD de Cursos Académicos
     │   ├── teams/                 # Módulo de Equipos y Miembros Colaborativos
@@ -146,3 +149,4 @@ Consulte los documentos clave en la carpeta [`sicoco-documentation/SICOCO/`](sic
 - [**15_entity_relationship_model_v2.md**](sicoco-documentation/SICOCO/15_entity_relationship_model_v2.md): Modelo Relacional V2 con `Conexion_Idea` y 19 entidades.
 - [**16_backend_architecture_and_api.md**](sicoco-documentation/SICOCO/16_backend_architecture_and_api.md): Especificación técnica de backend y API REST.
 - [**17_second_semester_scope.md**](sicoco-documentation/SICOCO/17_second_semester_scope.md): Resumen de avances y hoja de ruta del 9no semestre.
+- [**18_prompt_audit_and_backend_completion.md**](sicoco-documentation/SICOCO/18_prompt_audit_and_backend_completion.md): Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC).

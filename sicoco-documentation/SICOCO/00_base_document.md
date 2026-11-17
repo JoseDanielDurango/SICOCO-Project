@@ -185,39 +185,38 @@ graph TD
 
 ## Arquitectura del Backend y API REST (`sicoco-framework`)
 
-Para materializar la persistencia y la lógica del sistema, se construyó el backend en el repositorio `sicoco-framework` estructurado en **6 módulos operativos** que abarcan las cuatro zonas del modelo MODESEC:
+Para materializar la persistencia y la lógica del sistema, se construyó el backend en el repositorio `sicoco-framework` estructurado en **módulos operativos y núcleo de seguridad** que abarcan las cuatro zonas del modelo MODESEC cumpliendo al 100% las 5 fases de ingeniería:
 
-1. **Stack Tecnológico:** NestJS 12.0.1, TypeScript 6.0, Node.js 24, MongoDB 9 / Mongoose 9.11.4, Vite / Vitest 4.1.2, Swagger OpenAPI 12.1.0, `@nestjs/observe`, oxlint, prettier.
-2. **Punto de Entrada (`main.ts`):** Inicialización modular con telemetría e interfaz interactiva de Swagger OpenAPI desplegada en `/api` con tags para los 6 módulos.
-3. **Módulo de Usuarios (`UsersModule` - `/users`):**
-   - Esquema Mongoose `User` con campos `name`, `email` (único y obligatorio), `age` y timestamps automáticos.
+1. **Stack Tecnológico:** NestJS 12.0.1, TypeScript 6.0, Node.js 24, MongoDB 9 / Mongoose 9.11.4, Vite / Vitest 4.1.2, Swagger OpenAPI 12.1.0, `@nestjs/jwt`, `bcryptjs`, `helmet`, `class-validator`, `@nestjs/observe`, oxlint, prettier.
+2. **Punto de Entrada (`main.ts`):** Inicialización modular con telemetría, cabeceras Helmet, CORS, filtro global de excepciones (`AllExceptionsFilter`), tubería de validación global (`ValidationPipe`) e interfaz interactiva de Swagger OpenAPI desplegada en `/api` con autorización Bearer JWT.
+3. **Módulo de Salud Operativa (`AppController` - `/health`):** Endpoint de monitoreo que reporta estado, uptime, timestamp del servidor y entorno de ejecución.
+4. **Módulo de Autenticación y Seguridad (`AuthModule` - `/auth`):**
+   - Endpoints REST: `POST /auth/register`, `POST /auth/login`, `GET /auth/profile`, `GET /auth/teacher-only`.
+   - Encriptación de contraseñas con `bcryptjs` (salt 10) y firma de tokens JWT de 24 horas.
+   - Guardias de seguridad: `JwtAuthGuard` (extracción de token Bearer) y `RolesGuard` con decorador `@Roles('student', 'teacher', 'admin')` para control de acceso RBAC.
+5. **Módulo de Usuarios (`UsersModule` - `/users`):**
+   - Esquema Mongoose `User` con campos `name`, `email` (único), `password` (hash seguro, `select: false`), `role` (`student`/`teacher`/`admin`), `enrollmentNumber`, `academicProgram`, `currentSemester`, `age` y timestamps automáticos.
    - Endpoints REST: `POST /users`, `GET /users`, `GET /users/:id`, `PATCH /users/:id`, `DELETE /users/:id`.
-   - DTOs tipados (`CreateUserDto`, `UpdateUserDto`).
-4. **Módulo de Cursos (`CoursesModule` - `/courses`):**
+   - DTOs validados con `class-validator`.
+6. **Módulo de Cursos (`CoursesModule` - `/courses`):**
    - Esquema Mongoose `Course` (colección `'courses'`) con `code` (único), `name`, `academicSemester`, `instructor`, `description`, `isActive` y timestamps.
    - Endpoints REST: `POST /courses`, `GET /courses`, `GET /courses/:id`, `PATCH /courses/:id`, `DELETE /courses/:id`.
    - DTOs tipados (`CreateCourseDto`, `UpdateCourseDto`).
-5. **Módulo de Equipos Colaborativos (`TeamsModule` - `/teams`):**
+7. **Módulo de Equipos Colaborativos (`TeamsModule` - `/teams`):**
    - Esquema Mongoose `Team` con `name`, `courseId`, `requiresTeacherApproval`, subdocumentos embebidos `members` (`studentId`, `studentName`, `role`, `joinedAt`) y estado `isActive`.
    - Endpoints REST: `POST /teams`, `GET /teams`, `GET /teams/:id`, `PATCH /teams/:id`, `POST /teams/:id/members`, `DELETE /teams/:id/members/:studentId`, `DELETE /teams/:id`.
-6. **Módulo de Sesiones de Trabajo (`SessionsModule` - `/sessions`):**
+8. **Módulo de Sesiones de Trabajo (`SessionsModule` - `/sessions`):**
    - Esquema Mongoose `Session` con `title`, `generalObjective`, `teamId`, `meetingDate`, `platformOrigin` (whatsapp, discord, teams, meet, slack, other), `estimatedDurationMinutes` y `status`.
    - Endpoints REST: `POST /sessions`, `GET /sessions`, `GET /sessions/:id`, `PATCH /sessions/:id`, `DELETE /sessions/:id`.
-7. **Módulo de Ingesta de Transcripciones (`TranscriptsModule` - `/transcripts`):**
+9. **Módulo de Ingesta de Transcripciones (`TranscriptsModule` - `/transcripts`):**
    - Esquema Mongoose `Transcript` con `sessionId`, `sourcePlatform`, `format`, `dataSize`, bandera de seguridad `isConfidential` y subdocumentos jerárquicos `ChatMessage` (`senderName`, `senderId`, `senderAlias`, `timestamp`, `content`, `messageOrder`, `platformMetadata`).
    - Endpoints REST: `POST /transcripts`, `GET /transcripts`, `GET /transcripts/:id`, `POST /transcripts/:id/messages` (ingesta masiva desde scraper del navegador), `PATCH /transcripts/:id`, `DELETE /transcripts/:id`.
-8. **Módulo de Síntesis MODESEC y Co-creación (`SummariesModule` - `/summaries`):**
-   - Esquema Mongoose `Summary` con los cuatro pilares pedagógicos de MODESEC:
-     - `agreements`: Consensos y acuerdos con nivel de consenso y participantes.
-     - `disagreements`: Desacuerdos pedagógicos y posturas opuestas.
-     - `doubts`: Dudas abiertas clasificadas por categoría y urgencia.
-     - `tasks`: Tareas To-Do asignadas con responsables, fechas límite y prioridades.
-     - `timeline`: Momentos clave con soporte para la relación reflexiva `Conexion_Idea` (`inspiredByMomentId`).
-   - Flujo Asíncrono Anti-Timeout (Mitigación U1-01): `POST /summaries/generate` genera un `jobId` único UUID y responde inmediatamente `202 Accepted`, mientras que `GET /summaries/job/:jobId` permite sondeo (*polling*) hasta completar la inferencia con el LLM.
-   - Endpoints CRUD: `POST /summaries`, `GET /summaries`, `GET /summaries/:id`, `PATCH /summaries/:id`, `DELETE /summaries/:id`.
-9. **Infraestructura de Calidad y Pruebas Automatizadas:**
-   - Adopción de **Vitest** en lugar de Jest, ejecutando 13 suites de pruebas unitarias (`*.spec.ts`) para todos los módulos y controladores con 100% de aprobación.
-   - Pruebas de integración E2E configuradas con `supertest` en `test/app.e2e-spec.ts`.
+10. **Módulo de Síntesis MODESEC y Co-creación (`SummariesModule` - `/summaries`):**
+   - Esquema Mongoose `Summary` con los cuatro pilares pedagógicos de MODESEC (`agreements`, `disagreements`, `doubts`, `tasks`), línea de tiempo con relación reflexiva `Conexion_Idea` (`inspiredByMomentId`) y flujo asíncrono anti-timeout (`jobId`).
+   - Endpoints CRUD y asíncronos: `POST /summaries/generate`, `GET /summaries/job/:jobId`, `POST /summaries`, `GET /summaries`, `GET /summaries/:id`, `PATCH /summaries/:id`, `DELETE /summaries/:id`.
+11. **Infraestructura de Calidad y Pruebas Automatizadas:**
+   - Adopción de **Vitest** ejecutando **15 suites de pruebas unitarias (`*.spec.ts`) con 16 pruebas aprobadas al 100%**.
+   - Pruebas de integración E2E configuradas con `supertest` en `test/app.e2e-spec.ts` validando endpoints raíz y `/health`.
    - Linter de alta velocidad `oxlint` y formateo estandarizado con Prettier.
 
 ---

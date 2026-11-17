@@ -3,15 +3,32 @@ import { HydratedDocument } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
+export type UserRole = 'student' | 'teacher' | 'admin';
+
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;
 
-  @Prop()
+  @Prop({ required: false, select: false })
+  password?: string;
+
+  @Prop({ default: 'student', enum: ['student', 'teacher', 'admin'] })
+  role: string;
+
+  @Prop({ required: false })
+  enrollmentNumber?: string;
+
+  @Prop({ required: false, default: 'Licenciatura en Informática' })
+  academicProgram?: string;
+
+  @Prop({ required: false })
+  currentSemester?: number;
+
+  @Prop({ required: false })
   age?: number;
 }
 

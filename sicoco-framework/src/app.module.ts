@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { CoursesModule } from './courses/courses.module.js';
 import { TeamsModule } from './teams/teams.module.js';
@@ -34,6 +35,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
       serviceId: 'sicoco',
     }),
+    AuthModule,
     UsersModule,
     CoursesModule,
     TeamsModule,

@@ -1,19 +1,48 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AppModule, ObserveInstrument } from './app.module.js';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     instrument: ObserveInstrument,
   });
 
+  // Basic security headers (Phase 4)
+  app.use(helmet());
+
+  // Cross-Origin Resource Sharing (CORS)
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
+  // Global validation pipe for all DTOs (Phase 3)
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: false,
+      transform: true,
+    }),
+  );
+
+  // Global exception filter with standardized error format (Phase 3)
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  // Interactive OpenAPI / Swagger Documentation (Phase 5)
   const config = new DocumentBuilder()
     .setTitle('Sicoco API')
     .setDescription(
       'API documentation for SICOCO (Sintetizador de Co-creación Colaborativa) based on the MODESEC methodology.',
     )
     .setVersion('1.0')
-    .addTag('users', 'User profiles and authentication entities')
+    .addBearerAuth()
+    .addTag('health', 'System health check and operational status')
+    .addTag('auth', 'Authentication, password encryption (bcrypt), and JWT access tokens')
+    .addTag('users', 'User profiles and academic identity entities')
     .addTag('courses', 'Academic courses and subject management')
     .addTag('teams', 'Collaborative work teams and memberships')
     .addTag('sessions', 'Collaborative work sessions and meeting records')

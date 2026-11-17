@@ -72,6 +72,7 @@ Toda la documentación se encuentra organizada y estandarizada en inglés dentro
 | **15** | **Entity Relationship Model V2** | Esquema mejorado con `Conexion_Idea`, `Evaluacion_UX`, prompt linking y privacidad. | [15_entity_relationship_model_v2.md](SICOCO/15_entity_relationship_model_v2.md) |
 | **16** | **Backend Architecture & API** | Especificación técnica del backend en `sicoco-framework` (NestJS 12, MongoDB, Swagger, Vitest). | [16_backend_architecture_and_api.md](SICOCO/16_backend_architecture_and_api.md) |
 | **17** | **Second Semester Scope** | Resumen ejecutivo de los avances del 9no semestre y transición a software ejecutable. | [17_second_semester_scope.md](SICOCO/17_second_semester_scope.md) |
+| **18** | **Prompt Audit & Backend Completion** | Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC), validaciones DTO y `/health`. | [18_prompt_audit_and_backend_completion.md](SICOCO/18_prompt_audit_and_backend_completion.md) |
 
 ---
 
@@ -90,12 +91,14 @@ En la carpeta [`Resources/`](Resources/):
 ## Repositorio del Framework Backend
 
 La implementación de código fuente se encuentra en el proyecto adjunto **`sicoco-framework`**:
-- **Stack:** NestJS 12, TypeScript 6, MongoDB / Mongoose 9, Swagger OpenAPI 3, Vite / Vitest 4.
+- **Stack:** NestJS 12, TypeScript 6, MongoDB / Mongoose 9, Swagger OpenAPI 3, Vite / Vitest 4, JWT, bcryptjs, Helmet.
 - **Ruta de la API Swagger:** `http://localhost:3000/api`
-- **Módulos Operacionales (6/6):**
-  1. `UsersModule` (`/users`): Gestión de estudiantes y docentes.
-  2. `CoursesModule` (`/courses`): Asignaturas académicas.
-  3. `TeamsModule` (`/teams`): Equipos colaborativos y asignación de miembros con roles.
-  4. `SessionsModule` (`/sessions`): Sesiones de trabajo y registro de plataforma origen.
-  5. `TranscriptsModule` (`/transcripts`): Ingesta estructurada de mensajes desde scraper DOM.
-  6. `SummariesModule` (`/summaries`): Motor de síntesis MODESEC (4 pilares, `Conexion_Idea` y polling asíncrono con `jobId`).
+- **Módulos Operacionales y Núcleo de Seguridad:**
+  1. `Health`: Endpoint de comprobación de salud y disponibilidad operativa (`/health`).
+  2. `AuthModule` (`/auth`): Registro, inicio de sesión, encriptación bcrypt, emisión de JWT y control de acceso basado en roles (RBAC).
+  3. `UsersModule` (`/users`): Gestión de estudiantes y docentes con atributos institucionales.
+  4. `CoursesModule` (`/courses`): Asignaturas académicas.
+  5. `TeamsModule` (`/teams`): Equipos colaborativos y asignación de miembros con roles.
+  6. `SessionsModule` (`/sessions`): Sesiones de trabajo y registro de plataforma origen.
+  7. `TranscriptsModule` (`/transcripts`): Ingesta estructurada de mensajes desde scraper DOM.
+  8. `SummariesModule` (`/summaries`): Motor de síntesis MODESEC (4 pilares, `Conexion_Idea` y polling asíncrono con `jobId`).

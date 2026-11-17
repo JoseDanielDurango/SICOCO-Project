@@ -23,6 +23,16 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
 
+  it('/health (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/health')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.status).toBe('ok');
+        expect(res.body.service).toBe('sicoco-backend');
+      });
+  });
+
   afterEach(async () => {
     await app.close();
   });
