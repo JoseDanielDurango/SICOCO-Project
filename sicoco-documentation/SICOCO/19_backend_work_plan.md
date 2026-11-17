@@ -188,18 +188,19 @@ Ejecución limpia del 100% de las pruebas (`npm test` y `npm run test:e2e`) con 
 
 ---
 
-## 4. Cronograma de Hitos y Estado de Cumplimiento
+## 4. Cronograma de Hitos, Sprints y Estado de Cumplimiento Progresivo
 
-| Hito | Fase MODESEC | Descripción del Entregable | Estado | Evidencia Técnica |
-| :---: | :---: | :--- | :---: | :--- |
-| **H1** | Fase 1 | Servidor base NestJS 12, TypeScript ESM, `.env.example`, endpoint `GET /health`. | **Completado (100%)** | Código en `src/main.ts` y respuesta 200 en `/health`. |
-| **H2** | Fase 2 | Conexión a MongoDB Atlas / Local y esquemas tipados de las 4 zonas de datos. | **Completado (100%)** | 6 esquemas Mongoose con validación de tipos e índices. |
-| **H3** | Fase 3 | 6 módulos funcionales CRUD (`users`, `courses`, `teams`, `sessions`, `transcripts`, `summaries`). | **Completado (100%)** | 41 endpoints REST operativos cubriendo el modelo MODESEC. |
-| **H4** | Fase 3 | DTOs validados con `class-validator` y filtro global `AllExceptionsFilter`. | **Completado (100%)** | `http-exception.filter.ts` y `ValidationPipe` en `main.ts`. |
-| **H5** | Fase 4 | Módulo `AuthModule` con registro, login, encriptación bcrypt y emisión de JWT. | **Completado (100%)** | `POST /auth/register`, `POST /auth/login`, `GET /auth/profile`. |
-| **H6** | Fase 4 | Guardias de seguridad (`JwtAuthGuard`, `RolesGuard`), Helmet y CORS. | **Completado (100%)** | Protección de rutas probada con perfiles `student`, `teacher`, `admin`. |
-| **H7** | Fase 5 | Suite de pruebas unitarias Vitest y pruebas de integración E2E. | **Completado (100%)** | **15 suites unitarias (16 tests)** y **2 tests E2E** pasando con 0 fallos. |
-| **H8** | Fase 5 | Documentación interactiva OpenAPI Swagger en `/api` con Bearer Auth. | **Completado (100%)** | Consola Swagger interactiva documentando las 8 etiquetas de la API. |
+El plan de trabajo se distribuye a lo largo del periodo académico en **5 Sprints iterativos**. Conforme a las instrucciones del docente sobre entregas incrementales y validación paso a paso, el estado actual de avance del proyecto se resume en la siguiente tabla:
+
+| Hito / Sprint | Fase del Modelo | Periodo Estimado | Entregables Principales | Estado Actual | Observaciones / Próxima Validación |
+| :---: | :---: | :---: | :--- | :---: | :--- |
+| **Sprint 1 (H1)** | **Fase 1** | Semanas 1 – 3 | Servidor base NestJS 12, TypeScript ESM, variables `.env.example`, endpoint `GET /health` y telemetría. | **100% Completado** | Servidor verificado y disponible en puerto 3000 con respuesta 200 en `/health`. |
+| **Sprint 2 (H2)** | **Fase 2** | Semanas 4 – 6 | Conexión asíncrona a MongoDB Mongoose y modelado de las 4 zonas de datos (`User`, `Course`, `Team`, `Session`, `Transcript`, `Summary`). | **100% Completado** | Esquemas validados con índices únicos y subdocumentos embebidos. |
+| **Sprint 3 (H3)** | **Fase 3** | Semanas 7 – 10 | 6 módulos CRUD operativos, endpoint de ingesta masiva (`POST /transcripts/:id/messages`), DTOs con `class-validator` y `AllExceptionsFilter`. | **90% En Afinamiento** | Endpoints operativos; en fase de vinculación con los eventos del scraper DOM. |
+| **Sprint 4 (H4)** | **Fase 4** | Semanas 11 – 13 | Módulo `AuthModule` (registro, login), hashing `bcryptjs`, tokens JWT (24h), guardias `JwtAuthGuard`, `RolesGuard`, Helmet y CORS. | **85% En Validación** | Lógica criptográfica implementada; validando permisos granulares docente/alumno. |
+| **Sprint 5 (H5)** | **Fase 5** | Semanas 14 – 16 | 15 suites de pruebas unitarias Vitest (16 tests), pruebas E2E con Supertest, Swagger OpenAPI `/api` y pruebas piloto en aula. | **80% En Ejecución** | Pruebas unitarias listas al 100%; pruebas de carga y piloto en aula programadas para cierre. |
+
+> **Nota de Seguimiento Docente:** El equipo ha consolidado formalmente las **Fases 1 y 2** y cuenta con la base funcional de las **Fases 3 y 4** lista para demostración incremental y retroalimentación semanal conforme a la metodología de revisión docente.
 
 ---
 
