@@ -47,13 +47,15 @@ SICOCO-Project/
 ├── .gitignore                     # Configuración de exclusión para Git
 ├── sicoco-documentation/          # Documentación metodológica y técnica completa
 │   ├── README.md                  # Índice maestro de documentación
-│   ├── Resources/                 # Diagramas DBML, diagramas PNG, PDF y Technical Document (.docx)
+│   ├── Resources/                 # Diagramas DBML, diagramas PNG, PDF y Documentos Word (.docx)
+│   │   ├── Work Plan - SICOCO Backend.docx # Plan de Trabajo Oficial en formato APA 7
+│   │   ├── Technical Document.docx # Documento Técnico en formato APA 7
 │   │   ├── SICOCO_v2.png          # Diagrama ER V2 (Dark)
 │   │   ├── SICOCO_v2_Light.png    # Diagrama ER V2 (Light)
 │   │   ├── diagrama_bd_v2.dbml    # Código fuente DBML V2
 │   │   ├── MER - SICOCO.pdf       # Especificación completa en PDF
-│   │   └── Technical Document.docx # Documento Técnico en formato APA 7
-│   └── SICOCO/                    # 19 Documentos formales en inglés (00 al 18)
+│   │   └── Modelo Relacion - Entidad V2.pdf
+│   └── SICOCO/                    # 20 Documentos formales en inglés (00 al 19)
 │       ├── 00_base_document.md
 │       ├── 01_diagnosis.md
 │       ├── 02_pedagogical_design.md
@@ -74,7 +76,8 @@ SICOCO-Project/
 │       ├── 15_entity_relationship_model_v2.md
 │       ├── 16_backend_architecture_and_api.md
 │       ├── 17_second_semester_scope.md
-│       └── 18_prompt_audit_and_backend_completion.md
+│       ├── 18_prompt_audit_and_backend_completion.md
+│       └── 19_backend_work_plan.md
 └── sicoco-framework/              # Código fuente del Backend (NestJS + MongoDB)
     ├── package.json
     ├── nest-cli.json
@@ -150,3 +153,4 @@ Consulte los documentos clave en la carpeta [`sicoco-documentation/SICOCO/`](sic
 - [**16_backend_architecture_and_api.md**](sicoco-documentation/SICOCO/16_backend_architecture_and_api.md): Especificación técnica de backend y API REST.
 - [**17_second_semester_scope.md**](sicoco-documentation/SICOCO/17_second_semester_scope.md): Resumen de avances y hoja de ruta del 9no semestre.
 - [**18_prompt_audit_and_backend_completion.md**](sicoco-documentation/SICOCO/18_prompt_audit_and_backend_completion.md): Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC).
+- [**19_backend_work_plan.md**](sicoco-documentation/SICOCO/19_backend_work_plan.md): Plan de trabajo oficial por fases (1 a 5), matriz RACI, cronograma y estándares de entrega.

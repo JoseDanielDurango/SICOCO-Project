@@ -316,13 +316,15 @@ Al término del **8vo semestre** (*Diseño y Desarrollo de Software Educativo I*
 En el **9no semestre** (*Diseño y Desarrollo de Software Educativo II*), el proyecto dio el salto cualitativo hacia la **construcción física del sistema**:
 1. **Validación Técnica Aprobada:** Se solventaron las inconsistencias de diseño mediante el informe **U1-01** (mitigación de timeouts mediante procesamiento asíncrono y resolución de alias de estudiantes).
 2. **Modelo de Datos V2 Consolidado:** Se integraron `Conexion_Idea`, `Evaluacion_UX`, banderas de confidencialidad y la relación directa con `Configuracion_Prompt`.
-3. **Backend Empresarial Programado y Operativo:** En el repositorio `sicoco-framework`, se implementó el servidor base en **NestJS 12** con módulos CRUD tipados para `Users` y `Courses`, conexión a **MongoDB via Mongoose**, interfaz interactiva de **Swagger OpenAPI** en `/api` y suite de pruebas automatizadas con **Vitest**.
-4. **Roadmap para Cierre del MVP:** Implementar el módulo de ingesta de chats (`SessionsModule`), la integración con la API de Google Gemini (`AiModule`) y la extensión Chromium para desplegar el Dashboard interactivo ante los cursos piloto de la Universidad de Córdoba.
+3. **Backend Empresarial Programado y Operativo:** En el repositorio `sicoco-framework`, se implementó el servidor base en **NestJS 12** con módulos CRUD tipados para `Users`, `Courses`, `Teams`, `Sessions`, `Transcripts`, `Summaries`, autenticación integral `Auth` (JWT/bcrypt/RBAC), endpoint `/health`, conexión a **MongoDB via Mongoose**, interfaz interactiva de **Swagger OpenAPI** en `/api` y 15 suites de pruebas automatizadas con **Vitest** (100% de éxito).
+4. **Plan de Trabajo Oficial por Fases:** Se formalizó la hoja de ruta técnica bajo la metodología docente de 5 fases en el documento [19_backend_work_plan.md](19_backend_work_plan.md) y su correspondiente versión APA 7 en Word.
+5. **Roadmap para Cierre del MVP:** Conectar el content script de la extensión Chromium al endpoint masivo de transcripción y desplegar el Dashboard interactivo ante los cursos piloto de la Universidad de Córdoba.
 
 ---
 
 ## Recursos Visuales y Anexos
 
+- **Plan de Trabajo Oficial en Formato APA 7 (.docx):** [Work Plan - SICOCO Backend.docx](../Resources/Work%20Plan%20-%20SICOCO%20Backend.docx)
 - **Documento Técnico en Formato APA 7 (.docx):** [Technical Document.docx](../Resources/Technical%20Document.docx)
 - **Diagrama Entidad-Relación V2 (Dark):** [SICOCO v2.png](../Resources/SICOCO_v2.png)
 - **Diagrama Entidad-Relación V2 (Light):** [SICOCO v2 (Light).png](../Resources/SICOCO_v2_Light.png)

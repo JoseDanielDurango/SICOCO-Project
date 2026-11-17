@@ -73,12 +73,14 @@ Toda la documentación se encuentra organizada y estandarizada en inglés dentro
 | **16** | **Backend Architecture & API** | Especificación técnica del backend en `sicoco-framework` (NestJS 12, MongoDB, Swagger, Vitest). | [16_backend_architecture_and_api.md](SICOCO/16_backend_architecture_and_api.md) |
 | **17** | **Second Semester Scope** | Resumen ejecutivo de los avances del 9no semestre y transición a software ejecutable. | [17_second_semester_scope.md](SICOCO/17_second_semester_scope.md) |
 | **18** | **Prompt Audit & Backend Completion** | Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC), validaciones DTO y `/health`. | [18_prompt_audit_and_backend_completion.md](SICOCO/18_prompt_audit_and_backend_completion.md) |
+| **19** | **Backend Work Plan** | Plan de trabajo oficial por fases (Fases 1 a 5) estructurado según la metodología docente, matriz RACI, cronograma y estándares de calidad. | [19_backend_work_plan.md](SICOCO/19_backend_work_plan.md) |
 
 ---
 
 ## Recursos Visuales y Modelos de Datos
 
 En la carpeta [`Resources/`](Resources/):
+- **Plan de Trabajo Oficial en Formato APA 7 (.docx):** [`Work Plan - SICOCO Backend.docx`](Resources/Work%20Plan%20-%20SICOCO%20Backend.docx)
 - **Documento Técnico en Formato APA 7 (.docx):** [`Technical Document.docx`](Resources/Technical%20Document.docx)
 - **Diagrama Entidad-Relación V2 (Dark):** [`SICOCO v2.png`](Resources/SICOCO_v2.png)
 - **Diagrama Entidad-Relación V2 (Light):** [`SICOCO v2 (Light).png`](Resources/SICOCO_v2_Light.png)
