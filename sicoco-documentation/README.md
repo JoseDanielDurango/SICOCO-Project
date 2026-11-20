@@ -74,6 +74,7 @@ Toda la documentación se encuentra organizada y estandarizada en inglés dentro
 | **17** | **Second Semester Scope** | Resumen ejecutivo de los avances del 9no semestre y transición a software ejecutable. | [17_second_semester_scope.md](SICOCO/17_second_semester_scope.md) |
 | **18** | **Prompt Audit & Backend Completion** | Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC), validaciones DTO y `/health`. | [18_prompt_audit_and_backend_completion.md](SICOCO/18_prompt_audit_and_backend_completion.md) |
 | **19** | **Backend Work Plan** | Plan de trabajo oficial por fases (Fases 1 a 5) estructurado según la metodología docente, matriz RACI, cronograma y estándares de calidad. | [19_backend_work_plan.md](SICOCO/19_backend_work_plan.md) |
+| **20** | **Pre-Delivery Backend Consolidation** | Informe de consolidación del backend previo a la evaluación docente (Fases 1 a 5), endurecimiento de seguridad (Fase 4 al 100%) y bitácora de sprint. | [20_pre_delivery_backend_consolidation.md](SICOCO/20_pre_delivery_backend_consolidation.md) |
 
 ---
 

@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
 import { User, UserDocument } from '../users/schemas/user.schema.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,20 @@ export class AuthService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
   ) {}
+
+  async validateUser(email: string, pass: string): Promise<UserDocument | null> {
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec();
+
+    if (!user || !user.password) {
+      return null;
+    }
+
+    const isMatch = await bcrypt.compare(pass, user.password);
+    return isMatch ? user : null;
+  }
 
   async register(registerDto: RegisterDto) {
     const existing = await this.userModel.findOne({ email: registerDto.email }).exec();
@@ -65,17 +80,9 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userModel
-      .findOne({ email: loginDto.email })
-      .select('+password')
-      .exec();
+    const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    if (!user || !user.password) {
-      throw new UnauthorizedException('Invalid email or password credentials');
-    }
-
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
-    if (!isPasswordValid) {
+    if (!user) {
       throw new UnauthorizedException('Invalid email or password credentials');
     }
 
@@ -99,6 +106,30 @@ export class AuthService {
         enrollmentNumber: user.enrollmentNumber,
         academicProgram: user.academicProgram,
       },
+    };
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    const user = await this.userModel.findById(userId).select('+password').exec();
+    if (!user || !user.password) {
+      throw new NotFoundException('User account not found');
+    }
+
+    const isCurrentValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.password,
+    );
+
+    if (!isCurrentValid) {
+      throw new BadRequestException('Current password does not match records');
+    }
+
+    const saltRounds = 10;
+    user.password = await bcrypt.hash(changePasswordDto.newPassword, saltRounds);
+    await user.save();
+
+    return {
+      message: 'Password changed successfully',
     };
   }
 

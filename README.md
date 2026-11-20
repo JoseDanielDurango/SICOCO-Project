@@ -77,7 +77,8 @@ SICOCO-Project/
 │       ├── 16_backend_architecture_and_api.md
 │       ├── 17_second_semester_scope.md
 │       ├── 18_prompt_audit_and_backend_completion.md
-│       └── 19_backend_work_plan.md
+│       ├── 19_backend_work_plan.md
+│       └── 20_pre_delivery_backend_consolidation.md
 └── sicoco-framework/              # Código fuente del Backend (NestJS + MongoDB)
     ├── package.json
     ├── nest-cli.json
@@ -154,3 +155,4 @@ Consulte los documentos clave en la carpeta [`sicoco-documentation/SICOCO/`](sic
 - [**17_second_semester_scope.md**](sicoco-documentation/SICOCO/17_second_semester_scope.md): Resumen de avances y hoja de ruta del 9no semestre.
 - [**18_prompt_audit_and_backend_completion.md**](sicoco-documentation/SICOCO/18_prompt_audit_and_backend_completion.md): Auditoría del prompt docente (Fases 1 a 5), análisis de brechas e implementación de seguridad (JWT/bcrypt/RBAC).
 - [**19_backend_work_plan.md**](sicoco-documentation/SICOCO/19_backend_work_plan.md): Plan de trabajo oficial por fases (1 a 5), matriz RACI, cronograma y estándares de entrega.
+- [**20_pre_delivery_backend_consolidation.md**](sicoco-documentation/SICOCO/20_pre_delivery_backend_consolidation.md): Consolidación previa a la evaluación docente (Fases 1 a 5), culminación de seguridad (Fase 4 al 100%) y bitácora técnica.

@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
 import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { RolesGuard } from './guards/roles.guard.js';
 import { Roles } from './decorators/roles.decorator.js';
@@ -54,6 +56,34 @@ export class AuthController {
     return this.authService.getProfile(userId);
   }
 
+  @Patch('change-password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Change current user password after verifying current credentials' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid current password or weak new password' })
+  @ApiResponse({ status: 401, description: 'Unauthorized request' })
+  async changePassword(
+    @CurrentUser('sub') userId: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(userId, changePasswordDto);
+  }
+
+  @Get('student-only')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('student', 'admin')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'RBAC verification endpoint for student and admin profiles' })
+  @ApiResponse({ status: 200, description: 'Access granted to student workspace' })
+  @ApiResponse({ status: 403, description: 'Forbidden resource for current user role' })
+  async studentOnlyResource(@CurrentUser() user: any) {
+    return {
+      message: 'Access granted to student collaborative workspace',
+      user,
+    };
+  }
+
   @Get('teacher-only')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('teacher', 'admin')
@@ -63,7 +93,21 @@ export class AuthController {
   @ApiResponse({ status: 403, description: 'Forbidden resource for current user role' })
   async teacherOnlyResource(@CurrentUser() user: any) {
     return {
-      message: 'Access granted to teacher and administrative control zone',
+      message: 'Access granted to teacher and evaluation control zone',
+      user,
+    };
+  }
+
+  @Get('admin-only')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'RBAC verification endpoint exclusively for system administrators' })
+  @ApiResponse({ status: 200, description: 'Access granted to administrative governance zone' })
+  @ApiResponse({ status: 403, description: 'Forbidden resource for non-admin roles' })
+  async adminOnlyResource(@CurrentUser() user: any) {
+    return {
+      message: 'Access granted to system administrative governance zone',
       user,
     };
   }
