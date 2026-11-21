@@ -312,3 +312,324 @@ Ref: Encuesta_Piloto.ID_Estudiante > Estudiante.ID_Estudiante
 ## 4. Estado de Validación y Transición a la Implementación
 
 Con esta especificación V2, el equipo de desarrollo cerró el vacío estructural detectado en la auditoría técnica. El diseño no solo garantiza la coherencia referencial en bases de datos relacionales tradicionales, sino que sirvió como guía directa para proyectar los esquemas de persistencia no relacionales (Mongoose) implementados en el framework backend de SICOCO.
+
+
+---
+---
+
+# English Version
+
+# Updated Entity-Relationship Model (Version 2 - Semester IX)
+
+**Project:** SICOCO (Collaborative Co-Creation Synthesizer)  
+**Course:** 203453 · Design and Development of Educational Software II  
+**Academic Term:** 2026-2 · Semester IX · Universidad de Córdoba  
+**Associated Visual Resources:** [SICOCO v2.png](../Resources/SICOCO_v2.png) | [SICOCO v2 Light.png](../Resources/SICOCO_v2_Light.png) | [DBML Diagram v2](../Resources/diagrama_bd_v2.dbml) | [ERM PDF Document](../Resources/MER%20-%20SICOCO.pdf)
+
+---
+
+## 1. Architectural Justification and Enhancements in Model V2
+
+Stemming from the comprehensive analysis documented in the **Technical Design Validation Report (U1-01)** and collaborative peer review, the SICOCO Entity-Relationship Model was refined into **Version 2 (V2)** to eradicate structural inconsistencies and satisfy all MODESEC pedagogical and computational requirements.
+
+### Key Version 2 Enhancements and Integrations
+
+1. **Entity `Conexion_Idea` (Reflexive Recursive Self-Relationship):**  
+   Formally implemented a recursive many-to-many relationship on `Momento_Clave_Chat`. This substantiates the foundational premise of **Co-Creation**, empowering the database to trace how an exploratory premise articulated by one participant connects, inspires, or triggers a breakthrough solution formulated by a peer (Interview Question 16).
+2. **Entity `Evaluacion_UX`:**  
+   Added to complete the quality assurance lifecycle of Block 6 (Evaluation and Testing), storing visual layout clarity ratings, category partition clarity, and qualitative user feedback regarding dashboard ergonomics (Interview Question 18).
+3. **Privacy Flags and Governance Attributes:**  
+   - Added boolean flag `Es_Confidencial` to `Registro_Chat` to allow teams to mark sensitive deliberation records.
+   - Added boolean flag `Requiere_Aprobacion_Profesor` to `Equipo` to provide faculty instructors with moderation control over team formation (Block 7 Security Requirements).
+4. **Restoration of Foreign Key Linkage in `Resumen_Generado`:**  
+   Formalized the relational link `ID_Configuracion` (FK referencing `Configuracion_Prompt`), resolving the previous isolation between prompt templates and generated summaries.
+5. **Syntax Cleaning and Relationship Normalization:**  
+   Eliminated orphan and erroneous self-referential relations from the previous draft (such as truncated self-references on `Curso`).
+
+---
+
+## 2. Functional Zone Structure of Model V2
+
+The relational model is organized into four logical zones aligning with MODESEC domains:
+
+```mermaid
+graph TD
+    subgraph Z1 ["Zone 1: Academic Organization"]
+        Profesor -->|1:N| Curso
+        Curso -->|1:N| Equipo
+        Estudiante -->|1:N| Miembro_Equipo
+        Equipo -->|1:N| Miembro_Equipo
+    end
+
+    subgraph Z2 ["Zone 2: Sessions and Messaging"]
+        Equipo -->|1:N| Sesion_Trabajo
+        Sesion_Trabajo -->|1:N| Registro_Chat
+        Estudiante -->|1:N| Registro_Chat
+        Registro_Chat -->|1:N| Mensaje_Original
+    end
+
+    subgraph Z3 ["Zone 3: AI Processing"]
+        Configuracion_Prompt -->|1:N| Resumen_Generado
+        Sesion_Trabajo -->|1:N| Resumen_Generado
+        Resumen_Generado -->|1:N| Acuerdo_Equipo
+        Resumen_Generado -->|1:N| Desacuerdo
+        Resumen_Generado -->|1:N| Duda_Abierta
+        Resumen_Generado -->|1:N| Tarea_Asignada
+        Estudiante -->|1:N| Tarea_Asignada
+    end
+
+    subgraph Z4 ["Zone 4: Visualization and Quality"]
+        Resumen_Generado -->|1:N| Momento_Clave_Chat
+        Mensaje_Original -->|1:N| Momento_Clave_Chat
+        Momento_Clave_Chat -->|Reflexive Relation| Conexion_Idea
+        Resumen_Generado -->|1:N| Control_Calidad_Bot
+        Estudiante -->|1:N| Encuesta_Piloto
+        Estudiante -->|1:N| Evaluacion_UX
+    end
+```
+
+### Zone 1: Users, Roles, and Academic Organization
+- **`Estudiante`:** Stores student learner identities (`ID_Estudiante`, `Numero_Identidad_Matricula`, `Nombres`, `Apellidos`, `Correo_Institucional`, `Contraseña_Encriptada`, `Semestre_Actual`, `Programa_Academico`, `Fecha_Registro`).
+- **`Profesor`:** Faculty and instructor supervisor profiles (`ID_Profesor`, `Numero_Empleado`, `Nombres`, `Apellidos`, `Correo_Institucional`, `Departamento`, `Permiso_Sistema`).
+- **`Curso`:** Curricular subject groupings (`ID_Curso`, `Codigo_Materia`, `Nombre_Materia`, `Semestre_Academico`, `ID_Profesor_Responsable`).
+- **`Equipo`:** Collaborative student project teams (`ID_Equipo`, `Nombre_Equipo`, `ID_Curso`, `Fecha_Creacion`, `Requiere_Aprobacion_Profesor`).
+- **`Miembro_Equipo`:** Many-to-many associative junction table (`ID_Relacion`, `ID_Estudiante`, `ID_Equipo`, `Rol_En_Equipo`, `Fecha_Union`).
+
+### Zone 2: Data Ingestion and Work Sessions
+- **`Sesion_Trabajo`:** Represents a logical meeting session (`ID_Sesion`, `ID_Equipo`, `Fecha_Reunion`, `Objetivo_General`, `Plataforma_Origen`, `Duracion_Estimada`).
+- **`Registro_Chat`:** Represents the physical or digital ingestion asset (`ID_Registro`, `ID_Sesion`, `ID_Estudiante_Ingresa`, `Origen_Metadata`, `Formato_Entrada`, `Tamaño_Datos`, `Es_Confidencial`, `Created_At`).
+- **`Mensaje_Original`:** Atomic message decomposition (`ID_Mensaje`, `ID_Registro`, `Alias_Remitente`, `Cuerpo_Del_Mensaje`, `Fecha_Hora_Mensaje`).
+
+### Zone 3: AI Processing and MODESEC Output Pillars
+- **`Configuracion_Prompt`:** Catalog of prompt engineering templates (`ID_Configuracion`, `Nombre_Estilo`, `Texto_Instruccion_IA`, `Estado_Activo`).
+- **`Resumen_Generado`:** Consolidated AI synthesis records (`ID_Resumen`, `ID_Sesion`, `ID_Configuracion`, `Texto_Final_Plano`, `Modelo_IA_Usado`, `Consumo_Tokens`, `Fecha_Generacion`, `ID_Editor_Ultimo`, `Updated_At`).
+- **`Acuerdo_Equipo`:** Solidified team consensus and decisions (`ID_Acuerdo`, `ID_Resumen`, `Descripcion_Solucion`, `Nivel_Importancia`, `Alias_Quien_Propone`).
+- **`Desacuerdo`:** Debates and opposing stances (`ID_Desacuerdo`, `ID_Resumen`, `Tema_Debate`, `Descripcion_Oposicion`, `Estado_Resolucion`).
+- **`Duda_Abierta`:** Unresolved questions and uncertainties (`ID_Duda`, `ID_Resumen`, `Pregunta_Principal`, `Relacionado_Con_Tema`).
+- **`Tarea_Asignada`:** Actionable commitments and tasks (`ID_Tarea`, `ID_Resumen`, `Titulo_Actividad`, `ID_Estudiante_Asignado`, `Estatus`, `Fecha_Limite`).
+
+### Zone 4: Visualization and Quality Assurance
+- **`Momento_Clave_Chat`:** Chronological milestones for timeline visualization (`ID_Momento`, `ID_Resumen`, `Marca_Tiempo_Aproximada`, `ID_Mensaje_Relacionado`, `Alias_Usuario`, `Evento`).
+- **`Conexion_Idea`:** Reflexive self-relationship for the co-creation graph (`ID_Conexion`, `ID_Idea_Base`, `ID_Aporte_Extra`).
+- **`Control_Calidad_Bot`:** AI accuracy and fidelity auditing (`ID_Test`, `ID_Resumen`, `Cantidad_Falsos_Positivos`, `Calificacion_Fidelidad_Texto`, `Comentario_Tecnico`).
+- **`Evaluacion_UX`:** Dashboard usability metrics (`ID_Eval_UX`, `ID_Estudiante`, `Claridad_Visual`, `Separacion_Vista_Tareas`, `Sugerencias_Extra`).
+- **`Encuesta_Piloto`:** MODESEC formative educational impact evaluation (`ID_Encuesta`, `ID_Estudiante`, `Mejor_Comprension_Objetivos`, `Nivel_Apoyo_Grupo`, `Fecha_Respuesta`).
+
+---
+
+## 3. Official DBML Code of Model V2
+
+```dbml
+// =====================================================================
+// SICOCO: Collaborative Co-Creation Synthesizer
+// Entity-Relationship Model V2 (Semester IX - 2026-2)
+// =====================================================================
+
+// --- ZONE 1: Users, Roles, and Academic Organization ---
+
+Table Estudiante {
+  ID_Estudiante integer [primary key, increment]
+  Numero_Identidad_Matricula varchar [unique, not null]
+  Nombres varchar [not null]
+  Apellidos varchar [not null]
+  Correo_Institucional varchar [unique, not null]
+  Contraseña_Encriptada varchar [not null]
+  Semestre_Actual integer
+  Programa_Academico varchar
+  Fecha_Registro timestamp [default: `now()`]
+}
+
+Table Profesor {
+  ID_Profesor integer [primary key, increment]
+  Numero_Empleado varchar [unique, not null]
+  Nombres varchar [not null]
+  Apellidos varchar [not null]
+  Correo_Institucional varchar [unique, not null]
+  Departamento varchar
+  Permiso_Sistema integer [default: 1]
+}
+
+Table Curso {
+  ID_Curso integer [primary key, increment]
+  Codigo_Materia varchar [not null]
+  Nombre_Materia varchar [not null]
+  Semestre_Academico varchar [not null]
+  ID_Profesor_Responsable integer [not null]
+}
+
+Table Equipo {
+  ID_Equipo integer [primary key, increment]
+  Nombre_Equipo varchar [not null]
+  ID_Curso integer [not null]
+  Fecha_Creacion timestamp [default: `now()`]
+  Requiere_Aprobacion_Profesor boolean [default: false]
+}
+
+Table Miembro_Equipo {
+  ID_Relacion integer [primary key, increment]
+  ID_Estudiante integer [not null]
+  ID_Equipo integer [not null]
+  Rol_En_Equipo varchar [default: 'Participante']
+  Fecha_Union timestamp [default: `now()`]
+}
+
+// --- ZONE 2: Data Ingestion and Work Sessions ---
+
+Table Sesion_Trabajo {
+  ID_Sesion integer [primary key, increment]
+  ID_Equipo integer [not null]
+  Fecha_Reunion timestamp [default: `now()`]
+  Objetivo_General text
+  Plataforma_Origen varchar
+  Duracion_Estimada integer
+}
+
+Table Registro_Chat {
+  ID_Registro integer [primary key, increment]
+  ID_Sesion integer [not null]
+  ID_Estudiante_Ingresa integer [not null]
+  Origen_Metadata varchar
+  Formato_Entrada varchar
+  Tamaño_Datos integer
+  Es_Confidencial boolean [default: false]
+  Created_At timestamp [default: `now()`]
+}
+
+Table Mensaje_Original {
+  ID_Mensaje integer [primary key, increment]
+  ID_Registro integer [not null]
+  Alias_Remitente varchar [not null]
+  Cuerpo_Del_Mensaje text [not null]
+  Fecha_Hora_Mensaje timestamp
+}
+
+// --- ZONE 3: AI Processing and MODESEC Outputs ---
+
+Table Configuracion_Prompt {
+  ID_Configuracion integer [primary key, increment]
+  Nombre_Estilo varchar [not null] // E.g., Rapid, Formal/Academic
+  Texto_Instruccion_IA text [not null]
+  Estado_Activo boolean [default: true]
+}
+
+Table Resumen_Generado {
+  ID_Resumen integer [primary key, increment]
+  ID_Sesion integer [not null]
+  ID_Configuracion integer [not null] // Reconnected in V2
+  Texto_Final_Plano text
+  Modelo_IA_Usado varchar
+  Consumo_Tokens integer
+  Fecha_Generacion timestamp [default: `now()`]
+  ID_Editor_Ultimo integer
+  Updated_At timestamp
+}
+
+Table Acuerdo_Equipo {
+  ID_Acuerdo integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Descripcion_Solucion text [not null]
+  Nivel_Importancia varchar
+  Alias_Quien_Propone varchar
+}
+
+Table Desacuerdo {
+  ID_Desacuerdo integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Tema_Debate varchar [not null]
+  Descripcion_Oposicion text
+  Estado_Resolucion varchar [default: 'Activo']
+}
+
+Table Duda_Abierta {
+  ID_Duda integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Pregunta_Principal text [not null]
+  Relacionado_Con_Tema varchar
+}
+
+Table Tarea_Asignada {
+  ID_Tarea integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Titulo_Actividad varchar [not null]
+  ID_Estudiante_Asignado integer
+  Estatus varchar [default: 'Pendiente']
+  Fecha_Limite date
+}
+
+// --- ZONE 4: Visualization and Quality Assurance ---
+
+Table Momento_Clave_Chat {
+  ID_Momento integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Marca_Tiempo_Aproximada timestamp
+  ID_Mensaje_Relacionado integer
+  Alias_Usuario varchar
+  Evento varchar // 'New Idea', 'Solution', 'Debate'
+}
+
+Table Conexion_Idea {
+  ID_Conexion integer [primary key, increment]
+  ID_Idea_Base integer [not null]
+  ID_Aporte_Extra integer [not null]
+}
+
+Table Control_Calidad_Bot {
+  ID_Test integer [primary key, increment]
+  ID_Resumen integer [not null]
+  Cantidad_Falsos_Positivos integer [default: 0]
+  Calificacion_Fidelidad_Texto integer
+  Comentario_Tecnico text
+}
+
+Table Evaluacion_UX {
+  ID_Eval_UX integer [primary key, increment]
+  ID_Estudiante integer [not null]
+  Claridad_Visual integer // Scale 1 to 5
+  Separacion_Vista_Tareas boolean
+  Sugerencias_Extra text
+}
+
+Table Encuesta_Piloto {
+  ID_Encuesta integer [primary key, increment]
+  ID_Estudiante integer [not null]
+  Mejor_Comprension_Objetivos boolean
+  Nivel_Apoyo_Grupo integer // Scale 1 to 5
+  Fecha_Respuesta timestamp [default: `now()`]
+}
+
+// --- FOREIGN KEYS (RELATIONSHIPS) ---
+
+Ref: Curso.ID_Profesor_Responsable > Profesor.ID_Profesor
+Ref: Equipo.ID_Curso > Curso.ID_Curso
+Ref: Miembro_Equipo.ID_Estudiante > Estudiante.ID_Estudiante
+Ref: Miembro_Equipo.ID_Equipo > Equipo.ID_Equipo
+
+Ref: Sesion_Trabajo.ID_Equipo > Equipo.ID_Equipo
+Ref: Registro_Chat.ID_Sesion > Sesion_Trabajo.ID_Sesion
+Ref: Registro_Chat.ID_Estudiante_Ingresa > Estudiante.ID_Estudiante
+Ref: Mensaje_Original.ID_Registro > Registro_Chat.ID_Registro
+
+Ref: Resumen_Generado.ID_Sesion > Sesion_Trabajo.ID_Sesion
+Ref: Resumen_Generado.ID_Configuracion > Configuracion_Prompt.ID_Configuracion
+
+Ref: Acuerdo_Equipo.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Desacuerdo.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Duda_Abierta.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Tarea_Asignada.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Tarea_Asignada.ID_Estudiante_Asignado > Estudiante.ID_Estudiante
+
+Ref: Momento_Clave_Chat.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Momento_Clave_Chat.ID_Mensaje_Relacionado > Mensaje_Original.ID_Mensaje
+Ref: Conexion_Idea.ID_Idea_Base > Momento_Clave_Chat.ID_Momento
+Ref: Conexion_Idea.ID_Aporte_Extra > Momento_Clave_Chat.ID_Momento
+
+Ref: Control_Calidad_Bot.ID_Resumen > Resumen_Generado.ID_Resumen
+Ref: Evaluacion_UX.ID_Estudiante > Estudiante.ID_Estudiante
+Ref: Encuesta_Piloto.ID_Estudiante > Estudiante.ID_Estudiante
+```
+
+---
+
+## 4. Validation Status and Transition to Code Implementation
+
+With this V2 specification, the development team resolved all architectural gaps identified during the technical audit. The design not only guarantees referential integrity across relational schemas, but directly guided the projection of non-relational persistence schemas (Mongoose) implemented within the SICOCO backend framework.

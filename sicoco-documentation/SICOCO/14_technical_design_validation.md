@@ -103,3 +103,115 @@ La interconexión de estos hallazgos demostró que la persistencia de datos y la
 3. **Contratos Documentados mediante OpenAPI / Swagger:** Para erradicar la ambigüedad en los endpoints, se configuró Swagger (`@nestjs/swagger`) generando especificaciones interactivas en tiempo real en `/api`.
 
 Este informe de validación técnica constituyó el insumo fundamental para evolucionar el **Modelo Entidad-Relación a la Versión 2 (V2)** y dar paso a la codificación activa del framework backend del proyecto SICOCO durante este semestre.
+
+
+---
+---
+
+# English Version
+
+# Technical Validation Phase: Report U1-01 on Technical Design Audit (Semester IX)
+
+**Course:** 203453 · Design and Development of Educational Software II · Semester IX  
+**Institution:** Universidad de Córdoba · Faculty of Education and Human Sciences · Bachelor's in Computer Science Education  
+**Lead Faculty Instructor:** Alexander Enrique Toscano Ricardo  
+**Development Team:** SICOCO Dev Team (José Daniel Durango Caballero, Jefersson Ramírez Oviedo, Jesús Daniel Ruiz Román, Jeyson David López Gorrostola)  
+**Peer Review Team:** EDUQUEST (Jorge Mogollón Díaz, Jorge Guzmán Aguirre, Germán Rivera Rosario)  
+**Official Repositories:** `https://github.com/JoseDanielDurango/sicoco-documentation.git` / `sicoco-framework`
+
+---
+
+## 1. Handover Context and Baseline Starting Point
+
+At the start of the **9th semester** within the course **Design and Development of Educational Software II**, the engineering team undertook a formal technical audit of the theoretical and computational architecture developed during the 8th semester in *Design and Development of Educational Software I* (Course 203447).
+
+The objective of this technical validation phase went beyond superficial review: it sought to rigorously verify whether the inherited specification was complete, coherent, and viable for physical software construction (**MVP**), identifying discrepancies, omissions, and operational bottlenecks prior to code development in MODESEC Phase 4.
+
+### Inherited Documentation vs. Missing Documentation
+
+- **Documentation Received:** Technical Design Document and Pedagogical-Computational Foundations, User Story Specifications, and Initial Entity-Relationship Model (19 tables in DBDiagram).
+- **Missing Documentation Identified:**
+  1. *Backend Services Technical Blueprint:* Complete absence of formal service contracts (REST endpoint definitions, request/response JSON schemas, and HTTP status code mappings).
+  2. *Granular Data Dictionary:* Absence of character length bounds for text attributes (`VARCHAR(n)`), creating severe memory overflow risks when handling extensive chat transcripts.
+
+---
+
+## 2. Critical Findings in the Data Model
+
+During the audit of the inherited data model, four structural flaws requiring immediate remediation were identified:
+
+| No. | Finding | Original Location | Flaw Classification | Impact on Physical Implementation |
+| :---: | :--- | :--- | :---: | :--- |
+| **1** | **Orphan Quality Control Entity** | Chapter VI, Domain 6, Table `Control_Calidad_Bot` | **Omission** | The table lacked a foreign key (`FK`) referencing the evaluator. Accuracy evaluations remained anonymous, eliminating faculty accountability over model audits. |
+| **2** | **Disconnection Between Chat Aliases and Real Students** | Chapter VI, Tables `Mensaje_Original` and `Acuerdo_Equipo` | **Inconsistency** | Storing sender aliases as unstructured text (`VARCHAR`) without a cross-reference table to `ID_Estudiante` prevented automated grading attribution and task assignment to enrolled students. |
+| **3** | **Session-Agnostic Usability Surveys** | Chapter VI, Domain 6, Tables `Evaluacion_UX` and `Encuesta_Piloto` | **Omission** | Surveys were linked exclusively to individual students rather than specific work sessions (`ID_Sesion`), preventing instructors from assessing the pedagogical success of particular meetings. |
+| **4** | **Unbounded Data Lengths** | Chapter VI & Appendix B (DBDiagram) | **Omission** | Attributes `VARCHAR` and `TEXT` lacked explicit bounds. In relational systems, this causes database buffer pool degradation and query performance drops when indexing thousand-line transcripts. |
+
+---
+
+## 3. Findings Concerning Backend Services and APIs
+
+When evaluating computational architecture against MVP runtime demands, severe operational vulnerabilities emerged:
+
+### 3.1. Synchronous AI Processing (Critical HTTP Timeout Risk)
+- **Problem:** In the initial specification, transmitting transcripts to the AI API (Gemini / OpenAI) was conceived as a standard synchronous HTTP request (`Request -> Response`).
+- **Impact:** Processing collaborative transcripts with hundreds of messages requires 15 to 45 seconds of LLM inference. Web browsers and HTTP reverse proxies close idle connections via `Timeout` after 10 to 30 seconds, causing browser extensions to fail systematically and ruining user experience.
+
+### 3.2. Lack of Automated Task Lifecycle Governance
+- **Problem:** Entity `Tarea_Asignada` includes a target deadline field `Fecha_Limite`, but the design omitted any automated status management mechanism.
+- **Impact:** Tasks would remain perpetually marked as `"Pending"`, lacking a background daemon to evaluate expiration timestamps and transition them to `"Expired"`.
+
+### 3.3. Undefined Web Scraper (DOM) Ingestion Contract
+- **Problem:** The JSON interface between client browser extension scripts and backend ingestion endpoints remained unspecified for extracted WhatsApp Web, Discord, or Teams DOM nodes.
+- **Impact:** Tight architectural coupling and fragility between client DOM scrapers and server controllers.
+
+---
+
+## 4. Proposed Remediations and Dismissed Alternatives
+
+To demonstrate engineering rigor, the team designed remediations while formally analyzing and dismissing alternative proposals:
+
+```mermaid
+graph TD
+    subgraph H1 ["Finding 1: Orphan Quality Control"]
+        S1["Solution: FK ID_Profesor in Control_Calidad_Bot"]
+        A1["Alternative: Open peer-to-peer student rating"]
+        S1 -.->|Adopted: Faculty role is the accredited academic evaluator| S1
+        A1 -.->|Dismissed: Lacks academic evaluation rigor| A1
+    end
+
+    subgraph H2 ["Finding 2: Alias Disconnection"]
+        S2["Solution: Junction mapping table Alias_Estudiante"]
+        A2["Alternative: Force students to alter WhatsApp display names"]
+        S2 -.->|Adopted: Non-invasive, preserves student UX| S2
+        A2 -.->|Dismissed: Invasive and degrades user adoption| A2
+    end
+
+    subgraph H3 ["Finding 3: AI Request Timeout"]
+        S3["Solution: Asynchronous worker queue with Job_ID & Polling"]
+        A3["Alternative: Increase server HTTP timeout to 10 minutes"]
+        S3 -.->|Adopted: Scalable and non-blocking| S3
+        A3 -.->|Dismissed: Exhausts server worker thread pools| A3
+    end
+```
+
+### Comparative Architectural Decision Matrix
+
+| Finding | Adopted Remediation | Considered Alternative | Reason for Dismissing Alternative |
+| :--- | :--- | :--- | :--- |
+| **Orphan Quality Control** | Add `ID_Profesor` (FK) to `Control_Calidad_Bot`. | Permit open evaluation linked to `ID_Estudiante`. | Dismissed because under MODESEC, faculty instructors are the responsible tutors tasked with certifying objective learning outcomes. |
+| **Alias Disconnection** | Create an associative catalog `Alias_Estudiante` (`ID_Alias`, `Alias_Texto`, `ID_Estudiante`) to map chat handles to institutional student IDs. | Force students via UX prompt to change their profile names in WhatsApp/Discord before exporting chat logs. | Dismissed as highly invasive. Third-party messaging apps are dual-use (personal/academic); forcing profile modifications degrades student adoption. |
+| **Synchronous AI Processing** | Implement asynchronous backend processing: client dispatches `POST`, backend queues the job and replies immediately with a `Job_ID`. Client polls or receives WebSockets updates. | Increase web server `Timeout` thresholds to 5 or 10 minutes. | Dismissed because holding HTTP connections open consumes server threads and sockets. Multiple concurrent teams would crash server memory. |
+| **Task Status Governance** | Implement a scheduled background job (*Cron Job*) checking deadlines daily. | Update task status only when a student navigates to the task view. | Dismissed because if a student fails to log in, faculty dashboards would display expired tasks as active pending items. |
+
+---
+
+## 5. Unified Impact on Phase 4 Software Engineering
+
+The convergence of these audit findings dictated that data persistence and backend architecture required decoupling and structural hardening:
+
+1. **Enterprise Backend Architecture:** Selected **NestJS** and **TypeScript**, enabling clean REST service controllers, dependency injection, and scalable modularity.
+2. **Hybrid Persistence Strategy:** To resolve the complexity of handling unstructured conversational streams (hundreds of messages with volatile metadata) without saturating a rigid relational schema, **MongoDB** via **Mongoose** was integrated into the backend framework (`sicoco-framework`), maintaining logical fidelity with domain entities.
+3. **Documented Contracts via OpenAPI / Swagger:** Configured Swagger (`@nestjs/swagger`) to eliminate API ambiguity, generating interactive live documentation at `/api`.
+
+This technical validation report provided the foundational input that evolved the **Entity-Relationship Model to Version 2 (V2)** and initiated the physical codebase development of the SICOCO platform.

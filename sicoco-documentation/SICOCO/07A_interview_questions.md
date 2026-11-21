@@ -59,3 +59,70 @@ A continuación, se presentan 20 preguntas diseñadas para descubrir a fondo la 
 ## Bloque 7: Escalabilidad, Privacidad y Seguridad
 
 **20.** Conforme este sistema crezca almacenando mensajes estudiantiles para toda la universidad, ¿qué consideraciones elementales en cuanto a registro y privacidad exigen las bases de datos modernas?
+
+---
+---
+
+# English Version
+
+# Technical Interview: SICOCO Data Architecture (Questionnaire)
+
+**Role:** Senior Data Architect  
+**Objective:** Identify the core data modeling requirements for the relational and document database architecture of SICOCO, extracting structural specifications through the following structured questionnaire.
+
+The following 20 questions are designed to systematically uncover the information architecture of the platform.
+
+---
+
+## Block 1: Users, Roles, and Academic Organization
+
+**1.** What personal and academic attributes must be recorded for each student using SICOCO?  
+**2.** Are there other user types within the system besides students, such as instructors or system administrators?  
+**3.** How are students organized academically within the institutional hierarchy?  
+**4.** Given that SICOCO focuses on collaborative team deliverables, how do we structure collaborative workgroups?  
+**5.** How are team memberships managed? Can a single student belong to multiple teams concurrently?
+
+---
+
+## Block 2: Data Ingestion (Chat Logs and Work Sessions)
+
+**6.** When a team meets to discuss a project, what attributes does SICOCO record regarding the meeting session itself?  
+**7.** Given that users supply conversation transcripts, what metadata is tracked for each ingested chat payload?  
+**8.** Prior to generating the AI synthesis, is it mandatory to preserve each individual chat message discretely?
+
+---
+
+## Block 3: AI Processing (Prompt Engineering and Inference Engine)
+
+**9.** SICOCO supports multiple synthesis profiles (formal academic, rapid agile). How do we persist these master prompt instructions?  
+**10.** What execution metadata and telemetries are captured once the AI model processes a transcript and outputs a summary?
+
+---
+
+## Block 4: Output Pillars (The 4 Pedagogical Takeaways)
+
+**11.** Looking at "Agreements" structurally, what concrete attributes must be persisted for each recorded consensus?  
+**12.** When capturing "Disagreements or Opposing Views", what data model schema best represents cognitive friction and unresolved debate?  
+**13.** Regarding "Unresolved Doubts" left open during student sessions, what properties must be documented?  
+**14.** SICOCO organizes commitments into action items ("To-Do"). What non-negotiable fields constitute an assigned task in a collaborative system?
+
+---
+
+## Block 5: Co-Creation Mapping (Interactive Timeline)
+
+**15.** The user interface visualizes ideation evolution through a timeline; what formal entities and attributes comprise this structure?  
+**16.** Does the data architecture capture recursive interconnections showing which prior student contribution inspired a subsequent solution?
+
+---
+
+## Block 6: Evaluation, UX, and Field Feedback
+
+**17.** During technical accuracy benchmarking (Phase 5), what metrics are logged regarding synthesis precision and hallucination rates?  
+**18.** Concerning usability reviews (UX), what metrics assess whether color palettes and board layouts were clear to students?  
+**19.** To measure formative pedagogical utility, how do we record whether students felt more focused and supported by SICOCO?
+
+---
+
+## Block 7: Scalability, Privacy, and Security
+
+**20.** As the system scales to accommodate student conversations across the university, what privacy flags, audit timestamps, and security constraints must modern databases enforce?

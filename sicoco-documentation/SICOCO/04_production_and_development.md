@@ -43,3 +43,54 @@ Para evitar bloqueos o caídas por *HTTP Timeout* (hallazgo clave del informe U1
 - La extensión envía la transcripción mediante `POST /sessions/:id/process-chat`.
 - El backend encola la petición y retorna de inmediato un identificador de tarea (`Job_ID`).
 - La extensión consulta el avance mediante *Polling* periódico o WebSockets hasta recibir el resumen estructurado en el Dashboard.
+
+---
+---
+
+# English Version
+
+# Phase 4: Production and Development (Active Implementation)
+
+This phase encompasses building the functional prototype (**MVP**) of SICOCO, bridging the **Chromium browser extension** user interface with the enterprise backend framework and generative AI inference engine.
+
+---
+
+## 1. Backend Implementation Architecture (`sicoco-framework`)
+
+To realize the persistence and business logic validated in technical report U1-01, the team built the foundational server within the `sicoco-framework` repository:
+
+- **Framework and Language:** Engineered with **NestJS 12** and **TypeScript**, leveraging a native ECMAScript Modules architecture (`"type": "module"`).
+- **Hybrid Persistence Strategy:** Powered by **MongoDB** via **Mongoose 9**, providing flexible schema structures for semi-structured chat transcript ingestion while enforcing strict typing across academic entities.
+- **Operational Core Modules:**
+  - `UsersModule`: CRUD controllers and services for student and instructor management, equipped with Mongoose schemas and typed DTOs.
+  - `CoursesModule`: CRUD operations for academic courses and subjects (MongoDB `'courses'` collection).
+- **Interface Contract and Documentation:** Real-time **OpenAPI / Swagger** interactive UI deployed at `/api`.
+- **Quality Assurance:** Automated test suite orchestrated with **Vitest 4**, high-performance linting with **oxlint**, and unified Prettier code formatting.
+
+---
+
+## 2. Prompt Engineering (Generative AI Orchestration)
+
+**This represents the core intellectual component of the synthesis engine.**
+
+Because foundational LLMs are utilized without full retraining (fine-tuning), the system engages models (Google Gemini / OpenAI) using a structured **competency-based prompt architecture**:
+- System prompts require the model to return a strict JSON schema directly populating the `Team_Agreement`, `Disagreement`, `Open_Doubt`, and `Assigned_Task` entities.
+- Hallucination mitigation protocols ensure every extracted task references an explicit or contextually verified team member.
+
+---
+
+## 3. Handling Heterogeneous Conversational Modalities
+
+The backend is engineered to handle two fundamentally different conversational rhythms:
+
+1. **Fast-Paced, Fragmented Chats (WhatsApp Web, Telegram):** Short burst messages, emojis, colloquial slang, and temporal pauses. The scraper buffers consecutive messages from the same sender prior to LLM submission.
+2. **Structured, Formal Forums (Microsoft Teams, Moodle, Discord Threads):** Extended argumentative paragraphs and deep conceptual debates.
+
+---
+
+## 4. Asynchronous Ingestion Strategy (Anti-Timeout Architecture)
+
+To resolve connection drops caused by HTTP timeouts (a critical finding of the U1-01 audit):
+- The client extension submits conversation payloads via asynchronous processing endpoints.
+- The backend queues the workload and immediately returns a unique tracking identifier (`Job_ID`).
+- The extension queries job completion status via lightweight polling or WebSockets until the synthesized payload is rendered on the dashboard.

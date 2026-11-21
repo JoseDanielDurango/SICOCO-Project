@@ -216,3 +216,224 @@ Para asegurar la mantenibilidad a largo plazo del código fuente de SICOCO, el e
    - Rutas de API en minúsculas y plural (`/users`, `/courses`, `/summaries`).
 4. **Control de Versiones:** Commits estructurados bajo el estándar *Conventional Commits* (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`).
 5. **Comentarios de Código:** Exclusivos para bloques de alta complejidad técnica (flujo de extracción de tokens en `JwtAuthGuard`, mitigación de timeouts en `SummariesService.generate`).
+
+
+---
+---
+
+# English Version
+
+# Official Work Plan: SICOCO Backend Engineering (Phases 1 through 5)
+
+**Project:** SICOCO (Collaborative Co-Creation Synthesizer)  
+**Course:** Design and Development of Educational Software II (Code 203453) · Semester IX  
+**Lead Faculty Instructor:** Alexander Enrique Toscano Ricardo  
+**Institution:** Universidad de Córdoba · Faculty of Education and Human Sciences · Bachelor's in Computer Science Education  
+**Development Team:**  
+- José Daniel Durango Caballero  
+- Jefersson Ramírez Oviedo  
+- Jesús Daniel Ruiz Román  
+- Jeyson David López Gorrostola  
+**Publication Date:** November 2026  
+**Official Repository:** [https://github.com/JoseDanielDurango/SICOCO-Project](https://github.com/JoseDanielDurango/SICOCO-Project)
+
+---
+
+## 1. Justification and Objectives of the Work Plan
+
+This **Work Plan** formalizes the methodological and technical roadmap for engineering the backend application of the **SICOCO** platform (*sicoco-framework*), strictly adhering to the 5-phase lifecycle prescribed in *Design and Development of Educational Software II* under the **MODESEC** framework (Model of Strategy Organization for Competency-Based Educational Software Development).
+
+### 1.1. General Objective
+Design, construct, secure, and verify a robust, modular, and scalable enterprise backend built with **NestJS 12** and **MongoDB**, supporting all four MODESEC data zones for collaborative chat ingestion, pedagogical extraction across the 4 pillars (Agreements, Disagreements, Doubts, and Tasks), and co-creation graph visualization (`Conexion_Idea`), enforced through JWT authentication and Role-Based Access Control (RBAC).
+
+### 1.2. Technology Stack Specifications
+* **Language:** TypeScript 6.0 (ECMAScript Modules architecture `"type": "module"`).
+* **Backend Framework:** NestJS 12.0.1 (Decoupled layered architecture with Inversion of Control and Dependency Injection).
+* **NoSQL Database:** MongoDB 9.0 with Mongoose ODM 9.11.4.
+* **Security & Cryptography:** `bcryptjs` (salt factor 10), `@nestjs/jwt` (signed 24-hour stateless tokens), and `helmet`.
+* **Data Validation:** `class-validator` and `class-transformer` with global `ValidationPipe`.
+* **Testing Engines:** Vitest 4.1.2 for unit test suites (`*.spec.ts`) and Supertest for E2E integration test suites.
+* **Interactive Documentation:** OpenAPI 3.0 / Swagger UI deployed at `/api` with Bearer JWT authorization.
+
+---
+
+## 2. Structure of the Work Plan by Phases (5-Phase Methodology)
+
+```mermaid
+graph TD
+    F1["Phase 1: Project Structure and Server Configuration<br>(NestJS 12, ESM, .env, GET /health, Telemetry)"] --> F2["Phase 2: Database Connection and Data Modeling<br>(MongoDB, Mongoose, 4-Zone Schemas, UserSchema RBAC)"]
+    F2 --> F3["Phase 3: Module Development and Business Logic<br>(Users, Courses, Teams, Sessions, Transcripts, Summaries, DTOs, AllExceptionsFilter)"]
+    F3 --> F4["Phase 4: Security, Authentication, and Authorization<br>(AuthModule, bcrypt, JWT, JwtAuthGuard, RolesGuard, Helmet, CORS)"]
+    F4 --> F5["Phase 5: Automated Testing and API Documentation<br>(15 Vitest Suites, 2 E2E Suites, Swagger OpenAPI at /api)"]
+```
+
+---
+
+### Phase 1: Project Structure and Server Configuration
+
+#### Objective
+Establish the physical repository layout, configure the TypeScript ESM runtime environment, standardize environment variables, and implement application bootstrapping with operational diagnostic health checks.
+
+#### Work Plan Tasks
+1. Initialize the modular directory structure adhering to NestJS enterprise patterns within `src/`.
+2. Configure application bootstrap in `main.ts` integrating `@nestjs/observe` performance telemetry.
+3. Establish template environment variable file `.env.example` declaring `PORT`, `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `OBSERVE_APP_KEY`.
+4. Implement diagnostic endpoint `GET /health` in `AppController` returning service status, uptime, ISO timestamp, and runtime environment.
+5. Retain root connectivity verification endpoint `GET /`.
+
+#### Verifiable Deliverables
+- Files: `package.json`, `tsconfig.json`, `nest-cli.json`, `.env.example`, `src/main.ts`, `src/app.module.ts`, `src/app.controller.ts`, `src/app.service.ts`.
+- Running endpoint: `http://localhost:3000/health`.
+
+#### Acceptance Criteria
+The application server must start cleanly via `npm run start:dev`, load variables from `.env`, and respond with HTTP status code 200 on `/health`.
+
+---
+
+### Phase 2: Database Connection and Data Modeling
+
+#### Objective
+Establish resilient persistent connectivity to MongoDB via Mongoose, administering connection pooling and modeling document schemas representing the 19 entities of SICOCO's V2 relational architecture.
+
+#### Work Plan Tasks
+1. Configure asynchronous connection via `MongooseModule.forRootAsync` in `AppModule` utilizing `ConfigService`.
+2. Model extended `UserSchema` supporting secure credentials (`password` with `select: false`), role enumeration (`role`: `'student' | 'teacher' | 'admin'`), institutional enrollment ID (`enrollmentNumber`), academic program, and current semester.
+3. Model **Zone 1 (Academic Organization)** schemas: `CourseSchema` and `TeamSchema` with embedded `TeamMember` subdocuments.
+4. Model **Zone 2 (Sessions and Ingestion)** schemas: `SessionSchema` (timestamps, objectives, channel origins) and `TranscriptSchema` with embedded `ChatMessage` subdocuments.
+5. Model **Zones 3 & 4 (MODESEC Synthesis and Co-Creation)** schemas: `SummarySchema` with subdocuments for the 4 pillars (`agreements`, `disagreements`, `doubts`, `tasks`) and reflexive co-creation timeline (`timeline` with `Conexion_Idea` via `inspiredByMomentId`).
+
+#### Verifiable Deliverables
+- Compiled TypeScript Mongoose schemas: `user.schema.ts`, `course.schema.ts`, `team.schema.ts`, `session.schema.ts`, `transcript.schema.ts`, `summary.schema.ts`.
+
+#### Acceptance Criteria
+Validated asynchronous MongoDB connection, unique indexes on emails and course codes, and persistent subdocument embedding without foreign key corruption.
+
+---
+
+### Phase 3: Module Development and Business Logic
+
+#### Objective
+Construct REST controllers and business domain services for each platform entity, enforcing input payload validation and standardized global exception handling.
+
+#### Work Plan Tasks
+1. **Strict Layer Separation:** Every module encapsulates Controller (`*.controller.ts`), Business Service (`*.service.ts`), Data Transfer Objects (`dto/*.dto.ts`), and Schema (`schemas/*.schema.ts`).
+2. **Implementation of 6 Operational Modules:**
+   - **`UsersModule` (`/users`):** User CRUD operations.
+   - **`CoursesModule` (`/courses`):** Curricular subjects.
+   - **`TeamsModule` (`/teams`):** Collaborative teams with dedicated member enrollment endpoints (`POST /teams/:id/members`, `DELETE /teams/:id/members/:studentId`).
+   - **`SessionsModule` (`/sessions`):** Work sessions and meeting lifecycles.
+   - **`TranscriptsModule` (`/transcripts`):** Atomic and batch message ingestion from browser DOM scraper (`POST /transcripts/:id/messages`).
+   - **`SummariesModule` (`/summaries`):** MODESEC synthesis engine implementing asynchronous anti-timeout queue (`POST /summaries/generate` returning immediate `jobId` with HTTP 202, and `GET /summaries/job/:jobId` for polling).
+3. **Input Data Validation:** Annotate DTOs with `class-validator` and enable global `ValidationPipe({ whitelist: true, transform: true })` in `main.ts`.
+4. **Global Exception Handling:** Deploy `AllExceptionsFilter` (`src/common/filters/http-exception.filter.ts`) to return standardized JSON errors: `{ statusCode, timestamp, path, method, message, error }`.
+
+#### Verifiable Deliverables
+- Controllers and services for `users`, `courses`, `teams`, `sessions`, `transcripts`, and `summaries`.
+- Filter file: `src/common/filters/http-exception.filter.ts`.
+
+#### Acceptance Criteria
+Malformed payloads must be rejected with HTTP 400 Bad Request detailing invalid fields, and unexpected runtime exceptions must log to console and return HTTP 500 without leaking stack traces.
+
+---
+
+### Phase 4: Security, Authentication, and Authorization
+
+#### Objective
+Implement perimeter security, JSON Web Token (JWT) authentication, one-way password hashing, Role-Based Access Control (RBAC), and HTTP security headers.
+
+#### Work Plan Tasks
+1. **Authentication Module (`AuthModule`):**
+   - Implement `POST /auth/register` with email uniqueness checks and password hashing via `bcryptjs` (salt factor 10).
+   - Implement `POST /auth/login` evaluating passwords via `bcryptjs.compare` and issuing signed 24-hour JWT tokens.
+   - Implement `GET /auth/profile` returning authenticated claims from bearer tokens.
+2. **Authentication Guard (`JwtAuthGuard`):**
+   - Intercept requests, extract `Authorization: Bearer <token>`, verify cryptographic signature, and populate `request.user`.
+   - Support public route exclusions via `@Public()` decorator.
+3. **Role-Based Access Control (`RolesGuard`):**
+   - Implement declarative decorator `@Roles('teacher', 'admin')`.
+   - Deny unauthorized callers with HTTP 403 Forbidden (e.g., on `GET /auth/teacher-only`).
+4. **HTTP Transport Security:**
+   - Inject `helmet()` middleware in `main.ts` to defend against XSS, clickjacking, and MIME sniffing.
+   - Configure `cors({ origin: '*', credentials: true })` for Chromium extension connectivity.
+
+#### Verifiable Deliverables
+- Source code in `src/auth/` (`auth.controller.ts`, `auth.service.ts`, `auth.module.ts`, guards, and decorators).
+- Installed packages: `@nestjs/jwt`, `bcryptjs`, `@types/bcryptjs`, `helmet`.
+
+#### Acceptance Criteria
+Passwords must never be stored in plaintext. Unauthenticated queries must return HTTP 401 Unauthorized, and forbidden roles must return HTTP 403 Forbidden.
+
+---
+
+### Phase 5: Automated Testing and API Documentation
+
+#### Objective
+Certify system stability, coverage, and quality through automated testing suites and publish interactive OpenAPI documentation via Swagger UI.
+
+#### Work Plan Tasks
+1. **Unit Testing with Vitest:**
+   - Author isolated `*.spec.ts` suites for all controllers and services using Mongoose mocks (`getModelToken`) and `JwtService`.
+   - Complete coverage: `AppController`, `AuthService`, `AuthController`, `UsersService`, `UsersController`, `CoursesService`, `CoursesController`, `TeamsService`, `TeamsController`, `SessionsService`, `SessionsController`, `TranscriptsService`, `TranscriptsController`, `SummariesService`, `SummariesController`.
+2. **End-to-End Integration Testing (E2E):**
+   - Configure `vitest.config.e2e.ts` utilizing `supertest`.
+   - Validate HTTP 200 responses on `GET /`, `GET /health`, and auth routes in `test/app.e2e-spec.ts` and `test/auth.e2e-spec.ts`.
+3. **OpenAPI / Swagger 3.0 Documentation:**
+   - Configure `DocumentBuilder` in `main.ts` with Bearer auth support (`addBearerAuth()`).
+   - Group all 41 API endpoints under organized module tags: `health`, `auth`, `users`, `courses`, `teams`, `sessions`, `transcripts`, and `summaries`.
+
+#### Verifiable Deliverables
+- 15 unit test specification suites (`*.spec.ts`) and E2E suites in `test/`.
+- Interactive Swagger console accessible at `http://localhost:3000/api`.
+
+#### Acceptance Criteria
+100% test pass rate across `npm test` and `npm run test:e2e` with zero failures, and fully rendered interactive schemas in Swagger UI.
+
+---
+
+## 3. Team Responsibility Assignment Matrix (RACI Matrix)
+
+**Roles:**
+* **R (Responsible):** Direct implementer of the task.
+* **A (Accountable):** Technical supervisor and approver of deliverable.
+* **C (Consulted):** Provider of technical or pedagogical domain inputs.
+* **I (Informed):** Maintained updated on progress.
+
+| Work Plan Milestone / Deliverable | José Daniel Durango | Jefersson Ramírez | Jesús Daniel Ruiz | Jeyson David López |
+| :--- | :---: | :---: | :---: | :---: |
+| **Phase 1: NestJS Bootstrap, ESM & `/health`** | **A / R** | **C** | **I** | **I** |
+| **Phase 2: MongoDB Connection & V2 Mongoose Models** | **A** | **R** | **C** | **I** |
+| **Phase 3: Academic Modules (Users, Courses, Teams)** | **C** | **A / R** | **C** | **I** |
+| **Phase 3: Ingestion & MODESEC (Sessions, Transcripts, Summaries)** | **A / R** | **C** | **R** | **C** |
+| **Phase 3: DTO Validation & AllExceptionsFilter** | **R** | **C** | **A** | **I** |
+| **Phase 4: Auth Module, bcrypt Hashing & JWT Tokens** | **A / R** | **C** | **C** | **R** |
+| **Phase 4: RBAC Guards (@Roles) & HTTP Security (Helmet, CORS)** | **R** | **A** | **C** | **R** |
+| **Phase 5: Vitest Unit Suites & Supertest E2E Tests** | **A** | **R** | **A / R** | **C** |
+| **Phase 5: OpenAPI Specifications & Swagger Console /api** | **C** | **I** | **R** | **A / R** |
+| **Documentation Management & GitHub Synchronization** | **A / R** | **C** | **C** | **C** |
+
+---
+
+## 4. Milestone Schedule and Technical Compliance Status
+
+| Milestone / Sprint | Phase | Estimated Term | Core Deliverables | Compliance Status |
+| :---: | :---: | :---: | :--- | :---: |
+| **Sprint 1 (H1)** | **Phase 1** | Weeks 1 – 3 | NestJS 12 application server, TypeScript ESM, `.env.example`, diagnostic endpoint `GET /health`, and telemetry. | **100% Completed** |
+| **Sprint 2 (H2)** | **Phase 2** | Weeks 4 – 6 | Asynchronous MongoDB connection via Mongoose and 4-zone data schemas (`User`, `Course`, `Team`, `Session`, `Transcript`, `Summary`). | **100% Completed** |
+| **Sprint 3 (H3)** | **Phase 3** | Weeks 7 – 10 | 6 operational CRUD modules, batch message ingestion (`POST /transcripts/:id/messages`), `class-validator` DTOs, and `AllExceptionsFilter`. | **100% Completed** |
+| **Sprint 4 (H4)** | **Phase 4** | Weeks 11 – 13 | Complete `AuthModule` (register, login), `bcryptjs` hashing, 24h JWT tokens, `JwtAuthGuard`, `RolesGuard`, Helmet, and CORS. | **100% Completed** |
+| **Sprint 5 (H5)** | **Phase 5** | Weeks 14 – 16 | 15 Vitest unit test suites (16 tests), 2 E2E test suites with Supertest, Swagger OpenAPI `/api`, and official Postman collection. | **100% Completed** |
+
+---
+
+## 5. Engineering Standards and Code Quality Principles
+
+To guarantee long-term software maintainability, the team adopted mandatory engineering guidelines:
+1. **SOLID Principles:** Single responsibility per file (services handle business logic; controllers dispatch HTTP routes; schemas define database models).
+2. **Dependency Injection (IoC):** External dependencies (Mongoose models, `JwtService`, `Reflector`, `ConfigService`) are injected via native NestJS decorators (`@InjectModel`, `@Injectable`).
+3. **Naming Conventions:**
+   - Classes and types: *PascalCase* (`CreateUserDto`, `JwtAuthGuard`).
+   - Methods and variables: *camelCase* (`accessToken`, `findByEmail`).
+   - Files and directories: *kebab-case* with role suffix (`auth.controller.ts`, `jwt-auth.guard.ts`).
+   - API endpoints: lowercase plural nouns (`/users`, `/courses`, `/summaries`).
+4. **Version Control Governance:** Commits structured following the *Conventional Commits* specification (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`).
+5. **Code Documentation:** Strategic comments reserved for high-complexity operations (token extraction in `JwtAuthGuard`, timeout mitigation in `SummariesService.generate`).

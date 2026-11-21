@@ -110,3 +110,125 @@ El proyecto SICOCO ha alcanzado con éxito el estado de **backend completo y ope
    - Conexión del scraper de la extensión Chromium al endpoint `POST /transcripts/:id/messages`.
    - Conexión de `SummariesService.generate()` con la API de Google Gemini inyectando los prompts pedagógicos de MODESEC.
    - Ensamble visual de los componentes de la interfaz de usuario del Dashboard.
+
+
+---
+---
+
+# English Version
+
+# Study and Progress Guide for SICOCO (Semester IX)
+
+## Evolution, Collaboration, and Project Status (Technical Validation and Backend Development)
+
+This document serves as an executive summary and study guide detailing the consolidated advancements of the **SICOCO** (*Collaborative Co-Creation Synthesizer*) project during the **9th semester** within the course **Design and Development of Educational Software II**. It narrates the qualitative leap from theoretical planning (Semester I) into **physical software construction and engineering validation** (Semester II), outlining milestones achieved, division of labor, and the operational status of the codebase.
+
+---
+
+## 1. Chronology and Evolution of the Project
+
+While the 8th semester was strictly bounded to pedagogical design and conceptual modeling under the **MODESEC** framework, the 9th semester executed a **formal technical validation audit** and formally inaugurated **Phase 4: Production and Development**.
+
+```mermaid
+graph TD
+    subgraph S1 ["Semester 1 (8th): Design and Planning (Completed)"]
+        F1["Phase 1: Diagnosis<br>(Information overload & competencies)"] --> F2["Phase 2: Pedagogical Design<br>(4 Pillars, Interviews & User Stories)"]
+        F2 --> F3A["Phase 3: Computational Design<br>(Initial 19-table ERM)"]
+    end
+
+    subgraph S2 ["Semester 2 (9th): Validation & Implementation (Active & Operational)"]
+        F3A --> V1["Technical Validation U1-01<br>(Audit of timeouts, aliases, and referential gaps)"]
+        V1 --> MER2["Relational Model V2<br>(Conexion_Idea, Evaluacion_UX, and Security)"]
+        MER2 --> F4["Phase 4: Backend Framework Development<br>(sicoco-framework: NestJS 12, MongoDB, Swagger, Vitest)"]
+    end
+```
+
+---
+
+## 2. Master Documentation Catalog
+
+Below is the complete catalog of SICOCO project documentation unified with standard nomenclature:
+
+| File | Phase / Topic | Key Detailed Deliverables |
+| :--- | :--- | :--- |
+| **`00_base_document.md`** | Master / Overview | Institutional context (8th and 9th semesters), problem diagnosis, objectives, pedagogical foundation, and consolidated progress. |
+| **`01_diagnosis.md`** | Phase 1: Diagnosis | Information overload problem definition, target user profiles, and system mission statement. |
+| **`02_pedagogical_design.md`** | Phase 2: Pedagogical Design | 4-pillar analysis framework (Agreements, Disagreements, Tasks, Doubts) and collaborative co-creation map. |
+| **`03_computational_design.md`** | Phase 3: Computational Design | Technical specification of the MVP as a Chromium browser extension consuming AI APIs. |
+| **`04_production_and_development.md`** | Phase 4: Production & Development | Updated engineering guidelines for frontend extension and NestJS backend development. |
+| **`05_evaluation.md`** | Phase 5: Evaluation | Field validation protocol evaluating technical accuracy, usability, and formative educational utility. |
+| **`06_implementation_and_monitoring.md`** | Phase 6: Implementation | Institutional pilot deployment planning across Universidad de Córdoba courses and maintenance roadmap. |
+| **`07_data_architecture_interview_og.md`** | Legacy Requirements | Raw foundational data requirements used to derive initial entities, attributes, and messaging workflows. |
+| **`07A_interview_questions.md`** | Requirements (Questions) | 20-question structured interview guide with Senior Data Architect. |
+| **`07B_interview_answers.md`** | Requirements (Answers) | Detailed technical responses formalizing entity definitions and relationships. |
+| **`08_user_stories.md`** | Functional Requirements | User story matrix organized across 5 zones with Gherkin acceptance criteria. |
+| **`09_methodological_foundation.md`** | Pedagogical Foundation | MODESEC methodological framework, educational taxonomies, and co-creation paradigm. |
+| **`10_entity_relationship_model.md`** | Database Design V1 | Initial 19-entity relational specification in DBML and SQL. |
+| **`11_interview_model_comparison.md`** | Data Traceability | Traceability matrix verifying 100% coverage between architectural interview requirements and relational tables. |
+| **`12_technical_development.md`** | MVP Technical Architecture | Detailed component architecture, critical workflows, security, and non-functional requirements. |
+| **`13_first_semester_scope.md`** | Semester 1 Closure (8th) | Milestone certifying completion of theoretical design without executable code. |
+| **`14_technical_design_validation.md`** | Technical Validation U1-01 | Audit of inherited design, LLM timeout mitigations, and alias mapping catalogs. |
+| **`15_entity_relationship_model_v2.md`** | Relational Model V2 | Enhanced V2 schema with `Conexion_Idea`, `Evaluacion_UX`, linked prompts, and confidentiality flags. |
+| **`16_backend_architecture_and_api.md`** | Backend Architecture | Technical backend specification for `sicoco-framework` (NestJS 12, MongoDB/Mongoose, Swagger, Vitest). |
+| **`17_second_semester_scope.md`** | Semester 2 Advances (9th) | Executive summary of system evolution and transition to running software in the 9th semester. |
+| **`18_prompt_audit_and_backend_completion.md`** | Comprehensive Prompt Audit | Comprehensive audit against course prompt and phase consolidation. |
+| **`19_backend_work_plan.md`** | Official Backend Work Plan | Milestone schedule, 5-phase execution roadmap, and deliverable matrix. |
+| **`20_pre_delivery_backend_consolidation.md`** | Pre-Delivery Session Log | Living session document logging final sprint milestones, tests, and translations. |
+
+---
+
+## 3. Major Milestones Achieved This Semester
+
+### Milestone 1: Technical Validation and Report U1-01
+- In-depth architectural audit of the inherited preliminary design.
+- Identification of severe operational bottlenecks: *HTTP Timeout* failures caused by synchronous LLM inference and disconnection between student chat aliases and institutional enrollment IDs.
+- Formulation of justified engineering remediations: asynchronous queue architecture (`Job_ID`), student handle mapping catalog (`Alias_Estudiante`), and automated task expiration daemons.
+- Cross-team peer reviews conducted with cohort projects (including EDUQUEST and PROMETEO).
+
+### Milestone 2: Refinement of the Data Model to Version 2 (V2)
+- Formal integration of reflexive junction entity `Conexion_Idea` (self-relationship on `Momento_Clave_Chat`), mapping the collaborative ideation graph.
+- Addition of `Evaluacion_UX` to persist user experience feedback on dashboard ergonomics.
+- Inclusion of security and governance flags: `Es_Confidencial` on `Registro_Chat` and `Requiere_Aprobacion_Profesor` on `Equipo`.
+- Re-establishment of formal foreign key linkage between `Resumen_Generado` and `Configuracion_Prompt` (`ID_Configuracion`).
+- Export of official diagrams (`SICOCO v2.png` and `diagrama_bd_v2.dbml`).
+
+### Milestone 3: Physical Backend Development (`sicoco-framework`)
+Unlike the theoretical scope of the prior semester, **SICOCO now boasts a fully functional, running backend with modular enterprise architecture**:
+- **Enterprise Framework:** Implemented on NestJS 12 with modern TypeScript and ECMAScript Modules (`"type": "module"`).
+- **NoSQL Persistence Layer:** Asynchronous MongoDB integration via Mongoose 9, modeling typed schemas, subdocuments, and DTOs.
+- **Comprehensive Coverage of MODESEC Zones:**
+  - **Zone 1 (Academic Organization):** `UsersModule` (`/users`), `CoursesModule` (`/courses`), and `TeamsModule` (`/teams` with `TeamMember` subdocuments and roles).
+  - **Zone 2 (Sessions and Ingestion):** `SessionsModule` (`/sessions` with platform origins and status) and `TranscriptsModule` (`/transcripts` with `ChatMessage` subdocuments and batch ingestion at `/transcripts/:id/messages`).
+  - **Zones 3 & 4 (Synthesis and Co-Creation):** `SummariesModule` (`/summaries`) implementing all 4 output pillars (Agreements, Disagreements, Doubts, Tasks), the reflexive co-creation timeline (`inspiredByMomentId`), and the asynchronous queue (`POST /summaries/generate` -> `GET /summaries/job/:jobId`).
+- **Automated OpenAPI Documentation:** Swagger UI accessible at `/api` with categorized tags across all modules.
+- **Automated Testing and Quality Assurance:** High-performance Vitest test runner executing unit test suites and end-to-end integration tests with supertest.
+- **Observability:** OpenTelemetry performance monitoring via `@nestjs/observe`.
+
+---
+
+## 4. Division of Labor: Who Did What?
+
+### AI Assistant Contributions (Antigravity)
+* **Architectural Inconsistency Auditing:** Structural schema analysis to identify missing foreign keys and concurrency risks.
+* **Backend Code Generation:** Scaffolding controllers, services, DTOs, and schemas in NestJS 12 and Mongoose across domain modules.
+* **Asynchronous Inference Pipeline:** Implementation of the polling queue mechanism via `jobId` to eliminate HTTP timeouts.
+* **Testing Standardization:** Vitest test suites and supertest E2E integration test suites.
+* **Documentation Consolidation:** Cross-reference matrices and bilingual technical translations.
+
+### Development Team Contributions (SICOCO Dev Team)
+* **Domain Logic & Academic Criteria:** Customizing report U1-01 to curricular guidelines set by professor Alexander Enrique Toscano Ricardo.
+* **Critical Architectural Decision-Making:** Evaluating and dismissing invasive alternatives during technical validation (rejecting forced WhatsApp display name changes).
+* **Curricular Data Validation:** Tailoring Course, Team, and Student schemas to match Universidad de Córdoba degree programs.
+* **Verification of the 4 Pillars:** Specifying non-negotiable fields for Agreements, Disagreements, Doubts, Tasks, and Timelines.
+* **Local Environment Setup & Verification:** Validating Node.js environments, `.env` configurations, and Swagger UI endpoints.
+
+---
+
+## 5. Current System Status and Next Milestones
+
+The SICOCO project has successfully achieved the status of an **operational, fully tested enterprise backend**:
+1. **Ready Infrastructure:** The NestJS server compiles natively, serves OpenAPI documentation at `/api`, manages persistence in MongoDB, and passes all automated test suites.
+2. **Upcoming MVP Milestones:**
+   - Connect Chromium browser extension scrapers to `POST /transcripts/:id/messages`.
+   - Wire `SummariesService.generate()` directly to the Google Gemini API with MODESEC prompt templates.
+   - Assemble frontend dashboard UI components.

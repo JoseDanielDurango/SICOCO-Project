@@ -190,3 +190,202 @@ El backend de SICOCO ha superado la totalidad de los criterios formulados en el 
 - **Fase 3:** Cumplida al 100% (Arquitectura desacoplada en capas, `ValidationPipe` global con `class-validator`, y `AllExceptionsFilter` estandarizado).
 - **Fase 4:** Cumplida al 100% (Registro/Login con `bcryptjs`, tokens JWT, `JwtAuthGuard`, control de acceso RBAC con `RolesGuard`, Helmet y CORS).
 - **Fase 5:** Cumplida al 100% (15 suites de pruebas unitarias en Vitest con 100% de éxito, pruebas E2E con Supertest y documentación Swagger interactiva en `/api` con autorización Bearer).
+
+
+---
+---
+
+# English Version
+
+# Course Prompt Audit and Comprehensive Backend Completion (Phases 1 through 5)
+
+**Project:** SICOCO (Collaborative Co-Creation Synthesizer)  
+**Module:** Backend Framework and Persistence Layer (`sicoco-framework`)  
+**Course:** 203453 · Design and Development of Educational Software II · Semester IX  
+**Lead Faculty Instructor:** Alexander Enrique Toscano Ricardo  
+**Academic Term:** 2026-2 · Universidad de Córdoba
+
+---
+
+## 1. Context and Purpose of this Document
+
+The lead course instructor delivered a structured pedagogical prompt instructing the iterative construction of an enterprise software backend divided into **5 Phases**:
+1. *Phase 1: Project Structure and Server Configuration.*
+2. *Phase 2: Database Connection and Data Modeling.*
+3. *Phase 3: Module Development and Business Domain Logic.*
+4. *Phase 4: Security, Authentication, and Authorization.*
+5. *Phase 5: Automated Testing and Documentation.*
+
+Because the SICOCO development team had already engineered significant backend foundations (6 modules in NestJS 12 and MongoDB spanning all 4 MODESEC zones), this document records the **comparative technical audit (Gap Analysis)** contrasting faculty requirements against the codebase, detailing every newly implemented deliverable executed to achieve **100% operational fulfillment**.
+
+---
+
+## 2. Comparative Audit Matrix (Gap Analysis)
+
+| Faculty Prompt Phase | Specific Instructor Requirements | Prior State in SICOCO | Detected Gap (What was missing) | Technical Engineering Action Implemented |
+| :--- | :--- | :---: | :---: | :--- |
+| **Phase 1: Structure & Server** | Modular architecture, `main.ts`, `.env.example`, dependencies, and `/health` diagnostic endpoint. | **90%** | Missing the dedicated `/health` operational diagnostic endpoint. | Implemented `GET /health` in `AppController` and `AppService` returning uptime, ISO timestamp, environment, and service status. Integrated into E2E test suite. |
+| **Phase 2: Connection & Modeling** | Database connection, connection pooling/error handling, typed models/entities, constraints (`UNIQUE`, `NOT NULL`), and relationships. | **85%** | Entity `User` lacked authentication fields (hashed `password`) and institutional role profiles (`role`, enrollment ID). | Updated `UserSchema` incorporating `password` (with `select: false`), role enumeration (`student`, `teacher`, `admin`), `enrollmentNumber`, `academicProgram`, and `currentSemester`. |
+| **Phase 3: Modules & Logic** | Routes, controllers, services, repositories, DTO validation, and centralized exception handling. | **70%** | Lacked active input DTO validators (`class-validator`) and a global exception filter standardizing JSON errors. | Installed `class-validator` and `class-transformer`, activated global `ValidationPipe({ whitelist: true })`, and implemented `AllExceptionsFilter` (`http-exception.filter.ts`). |
+| **Phase 4: Security & Authorization** | Register/Login with `bcrypt`, JWT, route guards, role-based access control (RBAC), and security headers (Helmet, CORS). | **15%** | Complete absence of authentication modules, password hashing, JWT issuance, RBAC guards, or active Helmet headers. | Engineered complete `AuthModule` with `POST /auth/register`, `POST /auth/login`, `GET /auth/profile`, `bcryptjs`, `@nestjs/jwt`, `JwtAuthGuard`, `RolesGuard` (`@Roles()`), Helmet, and CORS. |
+| **Phase 5: Testing & Documentation** | Service unit tests, E2E integration tests, and interactive OpenAPI/Swagger documentation. | **85%** | Missing unit tests for Auth, missing `/health` E2E test, and lack of Bearer JWT authorization in Swagger docs. | Authored `auth.service.spec.ts` and `auth.controller.spec.ts`, achieving **15 unit suites (16 tests)** and **2 E2E test suites** with 100% pass rate, adding `addBearerAuth()` in Swagger `/api`. |
+
+---
+
+## 3. Engineering Implementations Detailed by Phase
+
+```mermaid
+graph TD
+    subgraph F1 ["Phase 1: Server and Diagnostics"]
+        H["GET /health<br>(Status, Uptime, Timestamp)"]
+    end
+
+    subgraph F2 ["Phase 2: Extended Schema Modeling"]
+        U["UserSchema<br>(+password, +role, +enrollmentNumber)"]
+    end
+
+    subgraph F3 ["Phase 3: Validation and Error Handling"]
+        VP["ValidationPipe (class-validator)<br>whitelist: true"]
+        EF["AllExceptionsFilter<br>Structured JSON errors"]
+    end
+
+    subgraph F4 ["Phase 4: Security and RBAC"]
+        BC["bcryptjs (Salt 10)"]
+        JWT["@nestjs/jwt (24h tokens)"]
+        JG["JwtAuthGuard (Bearer tokens)"]
+        RG["RolesGuard (@Roles decorator)"]
+        HL["Helmet + CORS headers"]
+    end
+
+    subgraph F5 ["Phase 5: Testing and OpenAPI Docs"]
+        VT["Vitest: 15 suites (16 tests) PASSED"]
+        E2E["Supertest: 2 E2E test suites PASSED"]
+        SW["Swagger OpenAPI (/api) + BearerAuth"]
+    end
+
+    F1 --> F2 --> F3 --> F4 --> F5
+```
+
+### 3.1. Phase 1: Operational Health Endpoint (`/health`)
+Added `GET /health` to `AppController`, delivering structured diagnostic telemetry:
+```json
+{
+  "status": "ok",
+  "service": "sicoco-backend",
+  "version": "1.0.0",
+  "uptime": 12.45,
+  "timestamp": "2026-11-17T12:00:00.000Z",
+  "environment": "development"
+}
+```
+
+### 3.2. Phase 2: User Schema for Authentication and MODESEC
+Updated `user.schema.ts` to support hashed credentials and institutional academic attributes:
+- `password`: Stores bcrypt password hashes. Configured with `select: false` so routine queries never leak password hashes in HTTP responses.
+- `role`: Institutional profile enumeration: `'student' | 'teacher' | 'admin'` (default `'student'`).
+- `enrollmentNumber`: Official student registration ID or faculty employee number.
+- `academicProgram`: Affiliated academic program (e.g., *Bachelor's in Computer Science Education*).
+- `currentSemester`: Active semester (e.g., 8 or 9).
+
+### 3.3. Phase 3: Global Validation and Standardized Exception Handling
+1. **Input Payload Validation:** Configured global `ValidationPipe` in `main.ts`. Incoming requests are evaluated for valid types, institutional email syntax (`@IsEmail()`), string length bounds (`@MinLength(6)`), and automatic stripping of non-whitelisted attributes (`whitelist: true`).
+2. **Centralized Exception Filter (`AllExceptionsFilter`):** Located at `src/common/filters/http-exception.filter.ts`, intercepts standard `HttpException` instances and unhandled server errors, enforcing uniform JSON responses:
+   ```json
+   {
+     "statusCode": 401,
+     "timestamp": "2026-11-17T12:01:23.456Z",
+     "path": "/auth/profile",
+     "method": "GET",
+     "message": "Authentication token missing or invalid",
+     "error": "Unauthorized"
+   }
+   ```
+
+### 3.4. Phase 4: Security, Authentication (JWT + bcrypt), and RBAC
+Engineered `AuthModule` implementing:
+1. **User Registration (`POST /auth/register`):**
+   - Validates email uniqueness.
+   - Hashes raw passwords using `bcryptjs.hash(password, 10)`.
+   - Persists user record in MongoDB and immediately issues a signed 24-hour JWT access token.
+2. **User Authentication (`POST /auth/login`):**
+   - Explicitly retrieves user record including hidden `password` hash.
+   - Evaluates credentials via `bcryptjs.compare()`.
+   - Generates signed JWT containing `sub`, `email`, `role`, and `name`.
+3. **Authentication Guard (`JwtAuthGuard`):**
+   - Extracts and verifies `Authorization: Bearer <token>` headers.
+   - Populates validated user payload into `request.user`.
+   - Respects public endpoints flagged with custom `@Public()` decorator.
+4. **Role-Based Access Control (`RolesGuard` & `@Roles()`):**
+   - Restricts sensitive endpoints declaratively: `@Roles('teacher', 'admin')`.
+   - Rejects unauthorized invocations with HTTP `403 Forbidden`.
+5. **HTTP Transport Security:**
+   - **Helmet:** Injects security headers (Content-Security-Policy, X-Frame-Options, X-XSS-Protection, Strict-Transport-Security).
+   - **CORS:** Enabled to permit secure cross-origin requests from the Chromium browser extension and web dashboard.
+
+### 3.5. Phase 5: Testing and Swagger Documentation with Bearer Auth
+1. **Automated Testing with Vitest:**
+   - 15 specification suites (`*.spec.ts`), covering `App`, `Auth`, `Users`, `Courses`, `Teams`, `Sessions`, `Transcripts`, and `Summaries`.
+   - 16 passing unit tests with 100% pass rate.
+   - End-to-end integration tests (`GET /`, `GET /health`, and `/auth` routes).
+2. **OpenAPI Swagger UI (`/api`):**
+   - Configured `.addBearerAuth()` allowing live testing of secured endpoints via the *"Authorize"* dialog.
+   - Categorized tags: `health`, `auth`, `users`, `courses`, `teams`, `sessions`, `transcripts`, and `summaries`.
+
+---
+
+## 4. Consolidated REST API Endpoint Catalog
+
+| Module | Method | Endpoint | Access / Guard | Description |
+| :--- | :---: | :--- | :---: | :--- |
+| **Health** | `GET` | `/health` | Public | Operational health check, uptime, and server environment telemetry. |
+| **Health** | `GET` | `/` | Public | Root welcome message and basic HTTP connectivity check. |
+| **Auth** | `POST` | `/auth/register` | Public | User registration with bcrypt password hashing and signed JWT issuance. |
+| **Auth** | `POST` | `/auth/login` | Public | Credential verification returning signed 24-hour JWT token. |
+| **Auth** | `GET` | `/auth/profile` | `JwtAuthGuard` | Retrieves authenticated user profile from bearer token claims. |
+| **Auth** | `GET` | `/auth/teacher-only` | `JwtAuthGuard` + `@Roles('teacher','admin')` | Demonstrates faculty/admin role-based access control. |
+| **Users** | `POST` | `/users` | Public | Direct user creation via typed DTO. |
+| **Users** | `GET` | `/users` | Public | Retrieves catalog of registered users. |
+| **Users** | `GET` | `/users/:id` | Public | Queries user by unique MongoDB identifier (`_id`). |
+| **Users** | `PATCH` | `/users/:id` | Public | Updates user attributes. |
+| **Users** | `DELETE`| `/users/:id` | Public | Deletes user record. |
+| **Courses**| `POST` | `/courses` | Public | Creates an academic course offering. |
+| **Courses**| `GET` | `/courses` | Public | Lists active curricular subjects. |
+| **Courses**| `GET` | `/courses/:id` | Public | Retrieves complete course details. |
+| **Courses**| `PATCH`| `/courses/:id` | Public | Modifies course attributes. |
+| **Courses**| `DELETE`| `/courses/:id` | Public | Deletes academic course. |
+| **Teams** | `POST` | `/teams` | Public | Creates collaborative team. |
+| **Teams** | `GET` | `/teams` | Public | Lists teams (filterable by `courseId`). |
+| **Teams** | `GET` | `/teams/:id` | Public | Queries team details and roster members (`TeamMember`). |
+| **Teams** | `PATCH`| `/teams/:id` | Public | Updates team metadata. |
+| **Teams** | `POST` | `/teams/:id/members` | Public | Enrolls a student member into team with assigned role. |
+| **Teams** | `DELETE`| `/teams/:id/members/:studentId` | Public | Removes a student member from team. |
+| **Teams** | `DELETE`| `/teams/:id` | Public | Deletes collaborative team. |
+| **Sessions**| `POST` | `/sessions` | Public | Creates a work session meeting. |
+| **Sessions**| `GET` | `/sessions` | Public | Lists work sessions (filterable by `teamId`). |
+| **Sessions**| `GET` | `/sessions/:id` | Public | Retrieves full session details. |
+| **Sessions**| `PATCH`| `/sessions/:id` | Public | Modifies meeting status, duration, or objective. |
+| **Sessions**| `DELETE`| `/sessions/:id` | Public | Deletes work session record. |
+| **Transcripts**| `POST` | `/transcripts` | Public | Creates transcript container. |
+| **Transcripts**| `GET` | `/transcripts` | Public | Lists transcripts by session. |
+| **Transcripts**| `GET` | `/transcripts/:id` | Public | Retrieves complete transcript with atomic messages. |
+| **Transcripts**| `POST` | `/transcripts/:id/messages` | Public | **Batch message ingestion (`ChatMessage[]`) from browser extension.** |
+| **Transcripts**| `PATCH`| `/transcripts/:id` | Public | Updates transcript metadata or privacy flags. |
+| **Transcripts**| `DELETE`| `/transcripts/:id` | Public | Deletes transcript record. |
+| **Summaries**| `POST` | `/summaries/generate` | Public | **Asynchronous AI synthesis (U1-01 anti-timeout) issuing `jobId`.** |
+| **Summaries**| `GET` | `/summaries/job/:jobId` | Public | **Periodic client polling endpoint tracking synthesis status.** |
+| **Summaries**| `POST` | `/summaries` | Public | Direct manual persistence of structured summaries. |
+| **Summaries**| `GET` | `/summaries` | Public | Lists generated summaries. |
+| **Summaries**| `GET` | `/summaries/:id` | Public | Retrieves summary by ID with all 4 pillars and timeline. |
+| **Summaries**| `PATCH`| `/summaries/:id` | Public | Updates tasks or agreements edited by students. |
+| **Summaries**| `DELETE`| `/summaries/:id` | Public | Deletes summary record. |
+
+---
+
+## 5. Audit Conclusion
+
+The SICOCO backend has completely satisfied all criteria formulated in the course prompt:
+- **Phase 1:** 100% Fulfilled (NestJS application, ECMAScript modules, `.env.example`, and operational `/health` endpoint).
+- **Phase 2:** 100% Fulfilled (Mongoose NoSQL persistence, 4-zone data schemas, and extended `UserSchema` with hashed passwords and roles).
+- **Phase 3:** 100% Fulfilled (Decoupled layered architecture, global `ValidationPipe` with `class-validator`, and standardized `AllExceptionsFilter`).
+- **Phase 4:** 100% Fulfilled (Registration/Login with `bcryptjs`, signed JWT tokens, `JwtAuthGuard`, role-based authorization via `RolesGuard`, Helmet, and CORS).
+- **Phase 5:** 100% Fulfilled (15 Vitest unit test suites passing at 100%, E2E integration test suites with Supertest, and interactive OpenAPI Swagger UI at `/api` with Bearer auth).

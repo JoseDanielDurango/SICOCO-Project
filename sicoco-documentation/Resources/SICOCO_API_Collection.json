@@ -1,0 +1,510 @@
+{
+  "info": {
+    "name": "SICOCO API - Official Postman Collection",
+    "_postman_id": "f51e7920-ba1b-40d0-8a56-sicoco-api-collection",
+    "description": "Complete Postman / Bruno collection for SICOCO (Sintetizador de Co-creación Colaborativa) based on MODESEC methodology and NestJS 12.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Diagnostics",
+      "item": [
+        {
+          "name": "Check Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Retrieves real-time system operational status, process uptime, and environment."
+          }
+        },
+        {
+          "name": "Base Greeting Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication & RBAC",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jos\\u00e9 Daniel Durango\",\n  \"email\": \"josedaniel@unicordoba.edu.co\",\n  \"password\": \"SecurePassword123!\",\n  \"role\": \"student\",\n  \"enrollmentNumber\": \"202610204\",\n  \"academicProgram\": \"Licenciatura en Inform\\u00e1tica\",\n  \"currentSemester\": 9\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User (Saves JWT token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set('token', jsonData.accessToken);",
+                  "    console.log('JWT Token stored successfully');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"josedaniel@unicordoba.edu.co\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Authenticated Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"SecurePassword123!\",\n  \"newPassword\": \"NewStrongPassword456!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Workspace Access (RBAC)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/student-only",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "student-only"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher Control Zone Access (RBAC)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/teacher-only",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "teacher-only"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin Governance Zone Access (RBAC)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/admin-only",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "admin-only"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zona 1 - Academic Organization",
+      "item": [
+        {
+          "name": "Users - List All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Courses - Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"203453\",\n  \"name\": \"Dise\\u00f1o y Desarrollo de Software Educativo II\",\n  \"academicSemester\": \"2026-2\",\n  \"instructor\": \"Mg. Alexander Enrique Toscano Ricardo\",\n  \"description\": \"Construcci\\u00f3n y validaci\\u00f3n de software educativo bajo MODESEC.\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Courses - List All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teams - Create Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Equipo SICOCO Dev\",\n  \"courseId\": \"203453\",\n  \"requiresTeacherApproval\": true,\n  \"members\": [\n    {\n      \"studentId\": \"std-001\",\n      \"studentName\": \"Jos\\u00e9 Daniel Durango\",\n      \"role\": \"leader\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teams - List All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zona 2 - Sessions & Ingestion",
+      "item": [
+        {
+          "name": "Sessions - Create Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reuni\\u00f3n de Definici\\u00f3n de Requisitos Sprint 4\",\n  \"generalObjective\": \"Concertar acuerdos sobre arquitectura de base de datos.\",\n  \"teamId\": \"team-sicoco-01\",\n  \"platformOrigin\": \"whatsapp\",\n  \"estimatedDurationMinutes\": 45,\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sessions - List All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transcripts - Create Transcript Container",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"sess-sicoco-01\",\n  \"sourcePlatform\": \"whatsapp\",\n  \"format\": \"scraped_dom\",\n  \"dataSize\": 1024,\n  \"isConfidential\": false,\n  \"messages\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transcripts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transcripts"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transcripts - Bulk Ingest Messages (DOM Scraper)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"senderName\": \"Jos\\u00e9 Daniel Durango\",\n    \"senderAlias\": \"Daniel\",\n    \"timestamp\": \"2026-11-20T17:00:00.000Z\",\n    \"content\": \"Propongo que usemos NestJS 12 y MongoDB para el backend.\",\n    \"messageOrder\": 1\n  },\n  {\n    \"senderName\": \"Jefersson Ram\\u00edrez\",\n    \"senderAlias\": \"Jefersson\",\n    \"timestamp\": \"2026-11-20T17:01:00.000Z\",\n    \"content\": \"Totalmente de acuerdo, agreguemos Vitest para pruebas ultrarr\\u00e1pidas.\",\n    \"messageOrder\": 2\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transcripts/:id/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transcripts",
+                ":id",
+                "messages"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zonas 3 y 4 - MODESEC Synthesis & Co-creation",
+      "item": [
+        {
+          "name": "Summaries - Trigger Async Ingestion (Returns Job ID)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"sess-sicoco-01\",\n  \"aiModel\": \"gemini-2.0-flash\",\n  \"promptConfigId\": \"prompt-modesec-v2\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/summaries/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "summaries",
+                "generate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Summaries - Poll Async Job Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/summaries/job/:jobId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "summaries",
+                "job",
+                ":jobId"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Summaries - List All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/summaries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "summaries"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

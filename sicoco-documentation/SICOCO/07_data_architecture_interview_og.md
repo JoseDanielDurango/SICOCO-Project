@@ -92,3 +92,104 @@ A continuación, se presentan 20 preguntas que deben realizarse durante la entre
 
 **20. Como SICOCO alberga los chats de personas y puede escalar a un entorno universitario permanente, ¿qué campos de infraestructura y permisos tenemos para asegurar su privacidad?**
 > **Posible Respuesta (Datos):** Cada tabla requerirá campos de `Created_At` (Fecha creación) y `Updated_At`. El registro del chat tendrá una bandera `Es_Confidencial` y los equipos de trabajo `Requiere_Aprobacion_Profesor`. Los IDs deben ser encriptados o en formato UUID para evitar fuga o que otros equipos miren los acuerdos de la competencia.
+
+
+---
+---
+
+# English Version
+
+# Technical Interview: SICOCO Data Architecture
+
+**Role:** Senior Data Architect  
+**Objective:** Identify schema requirements for modeling the relational database of the SICOCO project, extracting essential entities, attributes, and relationships.
+
+Below are 20 questions formulated during the initial requirements elicitation. The "Potential Responses" directly specify the **data types, attributes (columns), and schema entities** the system must store.
+
+---
+
+## Block 1: Users, Roles, and Academic Organization
+
+**1. What personal and academic data must we record for each student using SICOCO?**
+> **Potential Response (Data):** Entity `Estudiante` requires: `ID_Estudiante` (Primary Key), `Numero_Identidad_Matricula`, `Nombres`, `Apellidos`, `Correo_Institucional`, `Contraseña_Encriptada`, `Semestre_Actual`, `Programa_Academico` (e.g., Computer Science Education), and `Fecha_Registro`.
+
+**2. Are there other user roles in the system besides students, such as professors or administrators?**
+> **Potential Response (Data):** Yes, we require a `Rol` entity or extended attributes for `Profesor`: `ID_Profesor`, `Numero_Empleado`, `Nombres`, `Apellidos`, `Departamento`, and `Permiso_Sistema` level.
+
+**3. How do we organize students academically within the system?**
+> **Potential Response (Data):** Via academic subjects or courses. Entity `Curso`: `ID_Curso`, `Codigo_Materia`, `Nombre_Materia` (e.g., Educational Software Design I), `Semestre_Academico` (e.g., 2026-1), and `ID_Profesor_Responsable`.
+
+**4. Since SICOCO centers on group projects, how do we structure collaborative teams?**
+> **Potential Response (Data):** Entity `Equipo`: `ID_Equipo`, `Nombre_Equipo`, `ID_Curso` (associating the corresponding academic course), and `Fecha_Creacion`.
+
+**5. How do we manage team memberships? Can a student participate in multiple teams?**
+> **Potential Response (Data):** Yes, an intermediate junction table `Miembro_Equipo` is required: `ID_Relacion`, `ID_Estudiante`, `ID_Equipo`, `Rol_En_Equipo` (e.g., Leader, Member), and `Fecha_Union`.
+
+---
+
+## Block 2: Data Ingestion (Chats and Work Sessions)
+
+**6. When a team convenes to discuss a project, what metadata does SICOCO store regarding the meeting itself?**
+> **Potential Response (Data):** Entity `Sesion_Trabajo`: `ID_Sesion`, `ID_Equipo`, `Fecha_Reunion`, `Objetivo_General`, `Plataforma_Origen` (e.g., Discord, Teams, WhatsApp), and `Duracion_Estimada`.
+
+**7. Users provide their chat logs to the system. What information do we capture regarding this upload?**
+> **Potential Response (Data):** Entity `Registro_Chat`: `ID_Registro`, `ID_Sesion`, `Origen_Metadata` (URL, Path, or Buffer), `Formato_Entrada` (txt, csv, JSON), `Tamaño_Datos`, and `ID_Estudiante_Ingresa`. *(Note: Subject to final ingestion pipeline design).*
+
+**8. Prior to synthesis, is it necessary to store each individual chat message separately in the database?**
+> **Potential Response (Data):** Highly beneficial for downstream analytical precision. Entity `Mensaje_Original`: `ID_Mensaje`, `ID_Registro`, `Alias_Remitente`, `Cuerpo_Del_Mensaje` (Text), `Fecha_Hora_Mensaje` (Timestamp).
+
+---
+
+## Block 3: AI Processing (Prompt Engineering and Synthesis Engine)
+
+**9. SICOCO utilizes different "styles" or settings to instruct AI summarization. How do we store these master prompts?**
+> **Potential Response (Data):** Entity `Configuracion_Prompt`: `ID_Configuracion`, `Nombre_Estilo` (e.g., Quick, Formal/Academic), `Texto_Instruccion_IA`, and `Estado_Activo` (Boolean).
+
+**10. What details are stored when the system finally generates a summary of the entire chat?**
+> **Potential Response (Data):** Entity `Resumen_Generado`: `ID_Resumen`, `ID_Sesion`, `ID_Configuracion` (FK to Configuracion_Prompt), `Texto_Final_Plano` (fallback plaintext), `Modelo_IA_Usado` (e.g., Gemini-1.5, OpenAI), `Consumo_Tokens`, and `Fecha_Generacion`.
+
+---
+
+## Block 4: Information Pillars (The 4 Core Output Dimensions)
+
+**11. From a pedagogical standpoint, we must extract "Agreements". What attributes comprise an "Agreement"?**
+> **Potential Response (Data):** Entity `Acuerdo_Equipo`: `ID_Acuerdo`, `ID_Resumen`, `Descripcion_Solucion`, `Nivel_Importancia` (High/Medium/Low), and the `Alias_Quien_Propone`.
+
+**12. The synthesis also distinguishes "Disagreements or Opposing Views". What schema attributes does this require?**
+> **Potential Response (Data):** Entity `Desacuerdo`: `ID_Desacuerdo`, `ID_Resumen`, `Tema_Debate`, `Descripcion_Oposicion`, and `Estado_Resolucion` (Resolved / Active).
+
+**13. For "Unresolved Doubts" remaining at the conclusion of a session, what must be recorded?**
+> **Potential Response (Data):** Entity `Duda_Abierta`: `ID_Duda`, `ID_Resumen`, `Pregunta_Principal`, `Relacionado_Con_Tema` (e.g., Database, UI).
+
+**14. SICOCO extracts a "To-Do" list (Action Items). What are the essential database columns for tasks?**
+> **Potential Response (Data):** Entity `Tarea_Asignada`: `ID_Tarea`, `ID_Resumen`, `Titulo_Actividad`, `ID_Estudiante_Asignado` (FK to student), `Estatus` (Pending, In Progress, Completed), and `Fecha_Limite` or target deadline.
+
+---
+
+## Block 5: Co-Creation Mapping (Interactive Timeline)
+
+**15. To visualize how ideas evolve through a "Timeline", how do we store this chronology in a structured format?**
+> **Potential Response (Data):** Entity `Momento_Clave_Chat`: `ID_Momento`, `ID_Resumen`, `Marca_Tiempo_Aproximada`, `ID_Mensaje_Relacionado`, `Alias_Usuario`, and `Evento` ("New Idea", "Solution", "Inquiry").
+
+**16. Will the database link who contributed to whose ultimate solution?**
+> **Potential Response (Data):** Requires a recursive or intermediate relationship table `Conexion_Idea`: `ID_Idea_Base`, `ID_Aporte_Extra`, to visually map how ideas mutually reinforce one another over time.
+
+---
+
+## Block 6: Evaluation and Testing (System Feedback)
+
+**17. During technical validation of the summary (Phase 5), what metrics audit synthesis quality?**
+> **Potential Response (Data):** Entity `Control_Calidad_Bot`: `ID_Test`, `ID_Resumen`, `Cantidad_Falsos_Positivos`, `Calificacion_Fidelidad_texto` (1 to 10 scale), and `Comentario_Técnico`.
+
+**18. In the "Usability Test", user experience (UX) data will be collected. What is stored here?**
+> **Potential Response (Data):** Entity `Evaluacion_UX`: `ID_Eval_UX`, `ID_Estudiante`, `Claridad_Visual` (1-5 Likert scale), `Separacion_Vista_Tareas` (Boolean: Was distinction clear?), and `Sugerencias_Extra` (Long text feedback).
+
+**19. To measure educational impact on students (perceived improvement in collaboration), what attributes form the "Utility" survey?**
+> **Potential Response (Data):** Entity `Encuesta_Piloto`: `ID_Encuesta`, `ID_Estudiante`, `Mejor_Comprension_Objetivos_Si_No` (Boolean), `Nivel_de_Apoyo_En_Grupo` (1 to 5 scale), and `Fecha_Respuesta`.
+
+---
+
+## Block 7: Scalability, Privacy, and Security
+
+**20. Because SICOCO processes peer discussions and must scale to permanent university deployments, what security and privacy attributes are enforced?**
+> **Potential Response (Data):** Every table requires audit timestamps: `Created_At` and `Updated_At`. Chat records include a confidentiality flag `Es_Confidencial` and teams support `Requiere_Aprobacion_Profesor`. Identifiers must be encrypted or utilize UUID formats to prevent unauthorized cross-team data leaks.

@@ -331,3 +331,346 @@ En el **9no semestre** (*Diseño y Desarrollo de Software Educativo II*), el pro
 - **Código DBML V2:** [diagrama_bd_v2.dbml](../Resources/diagrama_bd_v2.dbml)
 - **Documento PDF del Modelo:** [MER - SICOCO.pdf](../Resources/MER%20-%20SICOCO.pdf)
 - **Diagrama Inicial (V1):** [DBDiagram.png](../Resources/DBDiagram.png) | [Modelo Relacion - Entidad V2.png](../Resources/Modelo%20Relacion%20-%20Entidad%20V2.png)
+
+
+---
+---
+
+# English Version
+
+# SICOCO Foundation Document (Collaborative Co-Creation Synthesizer)
+
+**Academic and Institutional Context:**
+The **SICOCO** project originated as an initiative of students from the **Bachelor's Degree in Computer Science with an Emphasis on Audiovisual Media** at **Universidad de Córdoba** (Montería, Colombia), under the direction of professor **Alexander Enrique Toscano Ricardo**. Its lifecycle spans two core academic terms:
+- **8th Semester (2026-1):** Course *Design and Development of Educational Software I* (Code 203447), focused on needs diagnosis, pedagogical design, methodological foundation (**MODESEC**), user stories, and conceptual/relational data modeling.
+- **9th Semester (2026-2):** Course *Design and Development of Educational Software II* (Code 203453), focused on formal technical validation (**Report U1-01**), refinement of the Entity-Relationship Model to Version 2 (**V2**), and the physical construction of the enterprise backend (**`sicoco-framework`**) using **NestJS 12**, **TypeScript**, **MongoDB/Mongoose**, **OpenAPI Swagger**, and **Vitest**.
+
+**Development Team (SICOCO Dev Team):**
+- José Daniel Durango Caballero
+- Jefersson Ramírez Oviedo
+- Jesús Daniel Ruiz Román
+- Jeyson David López Gorrostola
+
+---
+
+## Project Description
+
+SICOCO is an **Artificial Intelligence**-powered text processing digital platform designed to capture, parse, categorize, and synthesize group chat and discussion forum transcripts (WhatsApp Web, Discord, Teams). Its purpose transcends conventional text summarization: it acts as a metacognitive pedagogical tool that enables students to visualize their collaborative dynamics, identify individual responsibilities, and foster teamwork competencies under a competency-based education framework.
+
+---
+
+## Why Co-Creation?
+
+SICOCO is fundamentally defined as a **co-creation** platform rather than merely a **creation** environment (whether individual or traditional group work). While conventional authoring tools merely provide a workspace to compile a final deliverable, SICOCO actively and pedagogically intervenes in the constructive dialogue that produces that deliverable.
+
+Under the **MODESEC** methodological framework, the software qualifies as a co-creation platform for the following fundamental reasons:
+
+1. **Traceability and Evolution of Ideas (The Collective Fabric):** In simple authoring tools, final outputs erase intermediate debates. SICOCO, conversely, maps the chronological trajectory of collective thought. Through *Co-Creation Mapping* (represented in relational model V2 via the reflexive relationship `Conexion_Idea`), the system tracks how a participant's seed idea was refined, supported, or transformed by peer contributions over time.
+2. **Focus on Dialogue and Pedagogical Negotiation:** Co-creation requires constructive cognitive friction and dialogue. SICOCO explicitly extracts and classifies not only **Agreements**, but also **Disagreements** and **Unresolved Doubts**. This illuminates the group's negotiation of meaning, proving that collaborative learning stems from active consensus rather than passive task delegation.
+3. **The Mediating Role of Artificial Intelligence:** Within SICOCO, AI does not produce work *for* the student; rather, it serves as a metacognitive mirror reflecting the logical structure of student deliberations back to the team. By structuring contributions into distinct dimensions, AI empowers learners and instructors to reflect upon collaborative performance, exercise self-regulation, and elevate their analytical rigor.
+4. **Visibility of Individual Agency and Shared Responsibility:** Co-creation values the unique contribution of every team member toward collective success. Through participant alias attribution visible across dashboards and timelines, SICOCO honors individual intellectual authorship, proving how synergistic member engagement drives group milestones.
+
+---
+
+## The Problem
+
+Modern educational environments require students to collaborate via asynchronous instant messaging platforms (WhatsApp, Discord, Teams). This produces severe **information overload**, causing critical agreements, intellectual contributions, and unresolved questions to become lost within conversational clutter. SICOCO resolves this breakdown by structuring:
+
+1. **What was concluded:** Documented agreements and collective consensus.
+2. **Who originated each insight:** Explicit authorship tracking to validate engagement.
+3. **How the team debated:** Chronological mapping of discrepancies, doubts, and resolutions.
+
+---
+
+## Proposed Solution (MVP Architecture)
+
+Deliver a functional Minimum Viable Product (MVP) composed of two complementary layers:
+1. **Frontend / Chromium Browser Extension:** Ingests raw chat messages directly from DOM nodes (WhatsApp Web, Discord, Teams) or file uploads (.txt, .csv, .json), displaying an interactive **Dashboard** with timelines and categorical kanban boards.
+2. **Enterprise Backend and REST API (`sicoco-framework`):** Modular application server built upon **NestJS 12**, **TypeScript**, and **MongoDB/Mongoose**, engineered for asynchronous batch ingestion, structured LLM prompt orchestration (Google Gemini / OpenAI), relational/document persistence, and interactive OpenAPI Swagger documentation.
+
+---
+
+## Target Audience
+
+- **Higher Education and Secondary Students:** Primary beneficiaries seeking to optimize coordination time, track deliverables, and maintain focus across group assignments.
+- **Instructors / Evaluators:** Faculty members requiring objective visibility into team engagement, consensus-building, and peer contributions outside physical classrooms.
+- **Collaborative Project Teams:** Interdisciplinary working groups needing to audit decision-making histories in remote environments.
+
+---
+
+## Objectives
+
+### General Objective
+Develop a Minimum Viable Product of the SICOCO software platform utilizing Artificial Intelligence to synthesize and analyze collaborative student discussions, structuring information under the MODESEC framework to strengthen teamwork competencies in higher education.
+
+### Specific Objectives
+1. **Categorize conversational data** into four core pedagogical pillars: Agreements, Disagreements, Action Items (To-Do), and Unresolved Doubts.
+2. **Generate intuitive visual representations** (interactive timelines and categorical boards) enabling instant project status assessment.
+3. **Identify conceptual authorship** to highlight individual intellectual contributions to group deliverables.
+4. **Construct and integrate an enterprise backend** (NestJS + MongoDB) with asynchronous job processing to reliably handle LLM inference without request timeouts.
+5. **Validate educational utility** through field evaluations (technical precision, usability UX, and formative value) across academic courses at Universidad de Córdoba.
+
+---
+
+## Comprehensive Methodological Foundation (MODESEC Model)
+
+SICOCO's pedagogical foundation is rooted in **MODESEC** (Model of Strategy Organization for Competency-Based Educational Software Development). This methodology aligns software engineering directly with observable learning outcomes:
+
+1. **Primacy of Learning:** Technology serves as a transparent medium that makes intellectual progress visible and structures collective reasoning.
+2. **Guiding Competencies:** Development of collaborative capabilities, critical thinking, and self-directed metacognitive regulation.
+3. **Engineering Framework:** Architectural segregation into interconnected pedagogical domains:
+   - **Academic-Technical Domain:** Management of identities, roles (student/instructor), course cohorts, and teams.
+   - **Pedagogical Processing Domain:** LLM orchestration where prompt templates enforce pedagogical filtering across the four pillars.
+   - **Educational Visualization Domain:** UI components rendering co-creation maps and milestone trajectories.
+   - **Evaluation Domain:** Quality control instruments measuring synthesis fidelity, usability heuristics, and educational impact.
+
+---
+
+## Project Phases (MODESEC Lifecycle)
+
+### Phase 1: Diagnosis (Competency Assessment) — *Completed*
+Identification of communicative bottlenecks, cognitive friction, and information overload in asynchronous student chats. Core premise: *"Synthesize and analyze team discussions, serving as a formative pedagogical guide."*
+
+### Phase 2: Pedagogical Design and Planning — *Completed*
+Specification of the four analytical output pillars:
+1. **Agreements:** Consensus items and ratified decisions.
+2. **Disagreements / Opposing Views:** Debates and divergent positions.
+3. **Unresolved Doubts:** Open questions requiring clarification.
+4. **Action Items (To-Do):** Actionable commitments with assigned members and deadlines.
+Definition of the co-creation timeline, Senior Data Architect interview protocols, and formal user stories.
+
+### Phase 3: Computational and Technical Design — *Completed (V2)*
+Architectural blueprint of the MVP. Encompasses the formalization of **Entity-Relationship Model V2** (19 normalized entities, reflexive relationship `Conexion_Idea`, `Evaluacion_UX`, and privacy flags) alongside the hybrid persistence strategy (MongoDB for flexible chat documents and structured schemas for domain entities).
+
+### Phase 4: Production and Development — *Active & Consolidating*
+Physical construction of the software ecosystem:
+- **Backend Framework (`sicoco-framework`):** Implemented in **NestJS 12** and **TypeScript**, with **MongoDB/Mongoose** schemas for Users, Courses, Teams, Sessions, Transcripts, Summaries, and Auth, REST endpoints, OpenAPI Swagger docs at `/api`, and an automated test suite powered by **Vitest**.
+- **Upcoming Deliverables:** Browser extension DOM scraper scripts and cloud LLM prompt execution queue.
+
+### Phase 5: Evaluation (Field Trials) — *Consolidated & Tested*
+Validation protocol comprising three controlled instruments:
+1. **Technical Accuracy Benchmarks:** Precision evaluation and hallucination detection.
+2. **Usability Review (UX):** Visual clarity, board ergonomics, and UI navigation.
+3. **Formative Impact Assessment:** Perceptual survey measuring enhanced collaboration and clarity.
+
+### Phase 6: Implementation and Monitoring — *Planned*
+Institutional pilot deployment across active courses at Universidad de Córdoba over a three-week observational window, followed by evolutionary maintenance.
+
+---
+
+## Technical Design Validation: 9th Semester (Report U1-01)
+
+At the onset of the 9th semester (*Design and Development of Educational Software II*), the team performed an architectural audit (**Report U1-01**) on legacy design specifications from the prior semester, peer-reviewed with the **EDUQUEST** team:
+
+### 1. Data Architecture Findings
+- **Orphan Entity `Control_Calidad_Bot`:** Lacked foreign key linking to the evaluating instructor. Resolved by adding `ID_Profesor` (FK) to enforce academic accountability (rejecting anonymous crowd-sourced reviews).
+- **Disconnection Between Chat Aliases and Real Students:** Unchecked nicknames prevented task assignment to enrolled students. Addressed via the `Alias_Estudiante` mapping table (rejecting mandatory WhatsApp name changes to safeguard personal privacy).
+- **Session-Agnostic Usability Surveys:** Linked `ID_Sesion` to contextualize UX evaluations to specific collaborative meetings.
+- **Missing Data Type Constraints:** Enforced string lengths and constraints to prevent database memory degradation.
+
+### 2. Service and Backend Findings
+- **Synchronous LLM Timeout Failure:** Large transcripts containing hundreds of messages require over 20 seconds to process via LLMs, violating standard HTTP connection limits. Redesigned as an **asynchronous queue** (`POST` -> `Job_ID` -> `Polling`/WebSockets), rejecting server timeout increases that would exhaust connection pools.
+- **Missing Automated Task Status Updater:** Specified a background scheduled task (*Cron Job*) to mark expired tasks based on `Fecha_Limite`.
+- **Web Scraper Ingestion Contract:** Standardized JSON schemas for browser extension DOM ingestion.
+
+---
+
+## Data Architecture: Relational Model V2
+
+The optimized relational model consists of **19 entities** organized across 4 functional zones (refer to `15_entity_relationship_model_v2.md` and `SICOCO v2.png`):
+
+```mermaid
+graph TD
+    subgraph Zone1 ["Zone 1: Academic Organization"]
+        Profesor -->|1:N| Curso
+        Curso -->|1:N| Equipo
+        Estudiante -->|1:N| Miembro_Equipo
+        Equipo -->|1:N| Miembro_Equipo
+    end
+
+    subgraph Zone2 ["Zone 2: Sessions and Messaging"]
+        Equipo -->|1:N| Sesion_Trabajo
+        Sesion_Trabajo -->|1:N| Registro_Chat
+        Estudiante -->|1:N| Registro_Chat
+        Registro_Chat -->|1:N| Mensaje_Original
+    end
+
+    subgraph Zone3 ["Zone 3: AI Processing"]
+        Configuracion_Prompt -->|1:N| Resumen_Generado
+        Sesion_Trabajo -->|1:N| Resumen_Generado
+        Resumen_Generado -->|1:N| Acuerdo_Equipo
+        Resumen_Generado -->|1:N| Desacuerdo
+        Resumen_Generado -->|1:N| Duda_Abierta
+        Resumen_Generado -->|1:N| Tarea_Asignada
+        Estudiante -->|1:N| Tarea_Asignada
+    end
+
+    subgraph Zone4 ["Zone 4: Visualization and Evaluation"]
+        Resumen_Generado -->|1:N| Momento_Clave_Chat
+        Mensaje_Original -->|1:N| Momento_Clave_Chat
+        Momento_Clave_Chat -->|Reflexive Relation| Conexion_Idea
+        Resumen_Generado -->|1:N| Control_Calidad_Bot
+        Estudiante -->|1:N| Evaluacion_UX
+        Estudiante -->|1:N| Encuesta_Piloto
+    end
+```
+
+### Key Version 2 Enhancements:
+- **`Conexion_Idea`:** Reflexive self-relationship on `Momento_Clave_Chat` (`ID_Idea_Base` -> `ID_Aporte_Extra`) to trace collaborative ideation evolution.
+- **`Evaluacion_UX`:** Heuristic assessment table (`Claridad_Visual`, `Separacion_Vista_Tareas`, `Sugerencias_Extra`).
+- **Security & Privacy:** Mandatory confidentiality flags (`Es_Confidencial`) in `Registro_Chat` and team moderation flags (`Requiere_Aprobacion_Profesor`).
+- **Prompt Lineage:** Foreign key `ID_Configuracion` in `Resumen_Generado` referencing `Configuracion_Prompt`.
+
+---
+
+## Backend Architecture and REST API (`sicoco-framework`)
+
+To substantiate data persistence and domain logic, the backend was developed within `sicoco-framework`, organized into **modular operational domains and security layers** spanning all four MODESEC zones:
+
+1. **Technology Stack:** NestJS 12.0.1, TypeScript 6.0, Node.js 24, MongoDB 9 / Mongoose 9.11.4, Vite / Vitest 4.1.2, Swagger OpenAPI 12.1.0, `@nestjs/jwt`, `bcryptjs`, `helmet`, `class-validator`, `@nestjs/observe`, oxlint, prettier.
+2. **Application Entry Point (`main.ts`):** Modular bootstrap with OpenTelemetry tracing, Helmet HTTP security headers, CORS enablement, global exception filtering (`AllExceptionsFilter`), class validation pipeline (`ValidationPipe`), and OpenAPI Swagger interface accessible at `/api` with Bearer JWT authorization.
+3. **Operational Health Module (`AppController` - `/health`):** Diagnostic endpoint providing real-time operational status, system uptime, ISO timestamps, and environment configuration.
+4. **Authentication and RBAC Security (`AuthModule` - `/auth`):**
+   - REST Endpoints: `POST /auth/register`, `POST /auth/login`, `GET /auth/profile`, `GET /auth/teacher-only`.
+   - Security mechanics: Password hashing via `bcryptjs` (cost factor 10) and signed 24-hour stateless JWT tokens.
+   - Guards: `JwtAuthGuard` (bearer extraction) and `RolesGuard` utilizing custom `@Roles('student', 'teacher', 'admin')` decorator.
+5. **Users Domain Module (`UsersModule` - `/users`):**
+   - Mongoose Schema `User`: attributes for `name`, unique `email`, secure `password` hash (`select: false`), enumerated `role`, `enrollmentNumber`, `academicProgram`, `currentSemester`, `age`, and automatic timestamps.
+   - REST Endpoints: `POST /users`, `GET /users`, `GET /users/:id`, `PATCH /users/:id`, `DELETE /users/:id`.
+   - Validated DTOs with `class-validator`.
+6. **Courses Domain Module (`CoursesModule` - `/courses`):**
+   - Mongoose Schema `Course`: unique `code`, `name`, `academicSemester`, `instructor`, `description`, `isActive`, and audit timestamps.
+   - REST Endpoints: `POST /courses`, `GET /courses`, `GET /courses/:id`, `PATCH /courses/:id`, `DELETE /courses/:id`.
+   - Strongly-typed DTOs (`CreateCourseDto`, `UpdateCourseDto`).
+7. **Collaborative Teams Module (`TeamsModule` - `/teams`):**
+   - Mongoose Schema `Team`: attributes for `name`, `courseId`, `requiresTeacherApproval`, embedded subdocuments `members` (`studentId`, `studentName`, `role`, `joinedAt`), and `isActive` lifecycle state.
+   - REST Endpoints: `POST /teams`, `GET /teams`, `GET /teams/:id`, `PATCH /teams/:id`, `POST /teams/:id/members`, `DELETE /teams/:id/members/:studentId`, `DELETE /teams/:id`.
+8. **Work Sessions Module (`SessionsModule` - `/sessions`):**
+   - Mongoose Schema `Session`: attributes for `title`, `generalObjective`, `teamId`, `meetingDate`, `platformOrigin` (whatsapp, discord, teams, meet, slack, other), `estimatedDurationMinutes`, and `status`.
+   - REST Endpoints: `POST /sessions`, `GET /sessions`, `GET /sessions/:id`, `PATCH /sessions/:id`, `DELETE /sessions/:id`.
+9. **Transcript Ingestion Module (`TranscriptsModule` - `/transcripts`):**
+   - Mongoose Schema `Transcript`: attributes for `sessionId`, `sourcePlatform`, `format`, `dataSize`, confidentiality flag `isConfidential`, and embedded `ChatMessage` subdocuments (`senderName`, `senderId`, `senderAlias`, `timestamp`, `content`, `messageOrder`, `platformMetadata`).
+   - REST Endpoints: `POST /transcripts`, `GET /transcripts`, `GET /transcripts/:id`, `POST /transcripts/:id/messages` (batch ingestion endpoint from browser extension), `PATCH /transcripts/:id`, `DELETE /transcripts/:id`.
+10. **MODESEC Summaries and Co-Creation Module (`SummariesModule` - `/summaries`):**
+    - Mongoose Schema `Summary`: models all 4 MODESEC output pillars (`agreements`, `disagreements`, `doubts`, `tasks`), co-creation timeline with reflexive relationships (`inspiredByMomentId`), and asynchronous anti-timeout tracking (`jobId`).
+    - REST Endpoints: `POST /summaries/generate`, `GET /summaries/job/:jobId`, `POST /summaries`, `GET /summaries`, `GET /summaries/:id`, `PATCH /summaries/:id`, `DELETE /summaries/:id`.
+11. **Automated Quality and Testing Infrastructure:**
+    - High-performance testing powered by **Vitest** executing **15 unit test suites (`*.spec.ts`) with 16 passed tests**.
+    - End-to-End integration test suite configured with `supertest` in `test/app.e2e-spec.ts` and `test/auth.e2e-spec.ts`.
+    - Next-generation Rust linter `oxlint` and automated Prettier code formatting.
+
+---
+
+## Technical Interview: SICOCO Data Architecture (20 Questions)
+
+**Role:** Senior Data Architect  
+**Objective:** Identify schema requirements for modeling the SICOCO relational and document database.
+
+### Block 1: Users, Roles, and Academic Structure
+1. **What student data must be registered?** Entity `Estudiante`: `ID_Estudiante`, `Numero_Identidad_Matricula`, `Nombres`, `Apellidos`, `Correo_Institucional`, `Contraseña_Encriptada`, `Semestre_Actual`, `Programa_Academico`, `Fecha_Registro`.
+2. **What other user roles exist?** Entity `Profesor`: `ID_Profesor`, `Numero_Empleado`, `Nombres`, `Apellidos`, `Correo_Institucional`, `Departamento`, `Permiso_Sistema`.
+3. **How are students grouped academically?** Entity `Curso`: `ID_Curso`, `Codigo_Materia`, `Nombre_Materia`, `Semestre_Academico`, `ID_Profesor_Responsable`.
+4. **How are student teams structured?** Entity `Equipo`: `ID_Equipo`, `Nombre_Equipo`, `ID_Curso`, `Fecha_Creacion`, `Requiere_Aprobacion_Profesor`.
+5. **How are team memberships administered?** Associative entity `Miembro_Equipo`: `ID_Relacion`, `ID_Estudiante`, `ID_Equipo`, `Rol_En_Equipo`, `Fecha_Union`.
+
+### Block 2: Data Ingestion (Chats and Meetings)
+6. **What meeting metadata is stored?** Entity `Sesion_Trabajo`: `ID_Sesion`, `ID_Equipo`, `Fecha_Reunion`, `Objetivo_General`, `Plataforma_Origen`, `Duracion_Estimada`.
+7. **What chat ingestion data is captured?** Entity `Registro_Chat`: `ID_Registro`, `ID_Sesion`, `Origen_Metadata`, `Formato_Entrada`, `Tamaño_Datos`, `ID_Estudiante_Ingresa`, `Es_Confidencial`, `Created_At`.
+8. **Is every individual chat message persisted?** Entity `Mensaje_Original`: `ID_Mensaje`, `ID_Registro`, `Alias_Remitente`, `Cuerpo_Del_Mensaje`, `Fecha_Hora_Mensaje`.
+
+### Block 3: AI Processing (Prompts and Synthesis Engine)
+9. **How are master prompts stored?** Entity `Configuracion_Prompt`: `ID_Configuracion`, `Nombre_Estilo`, `Texto_Instruccion_IA`, `Estado_Activo`.
+10. **What summary attributes are logged?** Entity `Resumen_Generado`: `ID_Resumen`, `ID_Sesion`, `ID_Configuracion`, `Texto_Final_Plano`, `Modelo_IA_Usado`, `Consumo_Tokens`, `Fecha_Generacion`, `ID_Editor_Ultimo`, `Updated_At`.
+
+### Block 4: Output Pillars (The 4 Core Dimensions)
+11. **What attributes define an Agreement?** Entity `Acuerdo_Equipo`: `ID_Acuerdo`, `ID_Resumen`, `Descripcion_Solucion`, `Nivel_Importancia`, `Alias_Quien_Propone`.
+12. **What attributes define a Disagreement?** Entity `Desacuerdo`: `ID_Desacuerdo`, `ID_Resumen`, `Tema_Debate`, `Descripcion_Oposicion`, `Estado_Resolucion`.
+13. **What attributes define an Unresolved Doubt?** Entity `Duda_Abierta`: `ID_Duda`, `ID_Resumen`, `Pregunta_Principal`, `Relacionado_Con_Tema`.
+14. **What attributes define an Action Item (To-Do)?** Entity `Tarea_Asignada`: `ID_Tarea`, `ID_Resumen`, `Titulo_Actividad`, `ID_Estudiante_Asignado`, `Estatus`, `Fecha_Limite`.
+
+### Block 5: Co-Creation Mapping (Interactive Timeline)
+15. **How is the milestone timeline structured?** Entity `Momento_Clave_Chat`: `ID_Momento`, `ID_Resumen`, `Marca_Tiempo_Aproximada`, `ID_Mensaje_Relacionado`, `Alias_Usuario`, `Evento`.
+16. **How are interrelated ideas connected?** Reflexive entity `Conexion_Idea`: `ID_Conexion`, `ID_Idea_Base`, `ID_Aporte_Extra`.
+
+### Block 6: Evaluation, UX, and Field Feedback
+17. **What metrics audit summary accuracy?** Entity `Control_Calidad_Bot`: `ID_Test`, `ID_Resumen`, `ID_Profesor`, `Cantidad_Falsos_Positivos`, `Calificacion_Fidelidad_Texto`, `Comentario_Tecnico`.
+18. **What usability metrics are captured?** Entity `Evaluacion_UX`: `ID_Eval_UX`, `ID_Estudiante`, `Claridad_Visual`, `Separacion_Vista_Tareas`, `Sugerencias_Extra`.
+19. **How is educational impact evaluated?** Entity `Encuesta_Piloto`: `ID_Encuesta`, `ID_Estudiante`, `Mejor_Comprension_Objetivos`, `Nivel_Apoyo_Grupo`, `Fecha_Respuesta`.
+
+### Block 7: Scalability, Privacy, and Security
+20. **What security and privacy safeguards are enforced?** Mandatory audit timestamps (`Created_At`, `Updated_At`), confidentiality flags (`Es_Confidencial`), team moderation controls (`Requiere_Aprobacion_Profesor`), protected identifiers, and hashed passwords.
+
+---
+
+## User Story Matrix
+
+The consolidated matrix groups 16 functional user stories formulated with Gherkin acceptance criteria (detailed in `08_user_stories.md`):
+- **Zone 1: Users and Academic Organization (PER-01 to PER-04):** Student enrollment, faculty-course association, credential updates, and team rosters.
+- **Zone 2: Ingestion and Collaborative Sessions (SES-01 to SES-04):** Session initiation, transcript uploads, atomic message parsing, and historical query retrieval.
+- **Zone 3: AI Engine and Processing (IA-01 to IA-04):** Categorization into agreements, doubts, and tasks, actionable commitment extraction, open query detection, and frequent topic analysis.
+- **Zone 4: Visualization and Co-Creation Timeline (GUI-01 to GUI-04):** Chronological milestone visualization, conceptual authorship identification, synthesis profile selection, and categorical board navigation.
+- **Zone 5: Evaluation and Security (EVA-01 to EVA-04):** Faculty precision scoring (1-10 scale), manual summary editing, audit logging, and strict role-based access control (RBAC).
+
+---
+
+## Documentation Catalog of the SICOCO Project
+
+| No. | File | Phase / Topic | Core Purpose |
+| :---: | :--- | :--- | :--- |
+| **00** | **`00_base_document.md`** | Master / Overview | Institutional context, MODESEC foundation, V2 relational schema, and backend architecture. |
+| **01** | **`01_diagnosis.md`** | Phase 1: Diagnosis | Information overload problem definition and user profiles. |
+| **02** | **`02_pedagogical_design.md`** | Phase 2: Pedagogical Design | Methodological formulation of the 4 output pillars and co-creation map. |
+| **03** | **`03_computational_design.md`** | Phase 3: Computational Design | Technical architecture specifications and MVP feasibility. |
+| **04** | **`04_production_and_development.md`** | Phase 4: Production | Guidelines for frontend (extension) and NestJS backend development. |
+| **05** | **`05_evaluation.md`** | Phase 5: Evaluation | Field validation methodologies (precision, usability, formative impact). |
+| **06** | **`06_implementation_and_monitoring.md`** | Phase 6: Implementation | Institutional pilot planning and evolutionary maintenance roadmap. |
+| **07** | **`07_data_architecture_interview_og.md`** | Legacy Requirements | Preliminary physical data modeling responses across 19 entities. |
+| **07A** | **`07A_interview_questions.md`** | Requirements (Questions) | 20-question structured interview guide with Senior Data Architect. |
+| **07B** | **`07B_interview_answers.md`** | Requirements (Answers) | Technical responses formalizing entity definitions and relationships. |
+| **08** | **`08_user_stories.md`** | Functional Requirements | User story matrix with Gherkin acceptance criteria across 5 zones. |
+| **09** | **`09_methodological_foundation.md`** | Pedagogical Foundation | Co-creation approach, competencies, and MODESEC formative taxonomies. |
+| **10** | **`10_entity_relationship_model.md`** | Database Design V1 | Initial 19-entity relational specification in DBML/SQL. |
+| **11** | **`11_interview_model_comparison.md`** | Traceability Validation | Cross-referencing matrix linking interview questions to relational tables. |
+| **12** | **`12_technical_development.md`** | MVP Technical Architecture | Detailed component architecture, critical workflows, and security. |
+| **13** | **`13_first_semester_scope.md`** | Semester 1 Closure (8th) | Milestone certifying completion of theoretical and design phase. |
+| **14** | **`14_technical_design_validation.md`** | Technical Validation U1-01 | Audit of legacy design, LLM timeout solutions, and alias mapping. |
+| **15** | **`15_entity_relationship_model_v2.md`** | Relational Model V2 | Consolidated V2 schema with `Conexion_Idea`, `Evaluacion_UX`, and prompts. |
+| **16** | **`16_backend_architecture_and_api.md`** | Backend Architecture | Technical backend specification for `sicoco-framework` (NestJS 12, MongoDB, Swagger, Vitest). |
+| **17** | **`17_second_semester_scope.md`** | Semester 2 Advances (9th) | Executive summary of system evolution and transition to running software. |
+| **18** | **`18_prompt_audit_and_backend_completion.md`** | Comprehensive Prompt Audit | Comprehensive audit against course prompt and phase consolidation. |
+| **19** | **`19_backend_work_plan.md`** | Official Backend Work Plan | Milestone schedule, 5-phase execution roadmap, and deliverable matrix. |
+| **20** | **`20_pre_delivery_backend_consolidation.md`** | Pre-Delivery Session Log | Living session document logging final sprint milestones, tests, and translations. |
+
+---
+
+## Historical Scope: First Semester Closing (8th Semester — Design Only)
+
+At the conclusion of the **8th semester** (*Design and Development of Educational Software I*), the SICOCO project reached **100% completion of its theoretical and design foundation**:
+- Formalization of Phases 1, 2, and 3 under the MODESEC methodology.
+- 20-question requirement interview questionnaire and cross-reference traceability matrix.
+- Comprehensive matrix of 16 user stories specified with Gherkin acceptance criteria.
+- Initial 19-entity relational database modeled on DBDiagram.
+- During that period, **SICOCO did not have an executable prototype or codebase**.
+
+---
+
+## Current Scope and Status: Second Semester Advances (9th Semester — Executable Software)
+
+In the **9th semester** (*Design and Development of Educational Software II*), the project transitioned into **physical software construction**:
+1. **Approved Technical Validation:** Design bottlenecks were resolved in report **U1-01** (mitigating LLM timeouts through asynchronous job processing and mapping student aliases).
+2. **Consolidated V2 Data Architecture:** Integrated `Conexion_Idea`, `Evaluacion_UX`, confidentiality indicators, and direct foreign key linkage to `Configuracion_Prompt`.
+3. **Operational Enterprise Backend:** Within the `sicoco-framework` repository, a modular **NestJS 12** application was built featuring fully typed CRUD modules for `Users`, `Courses`, `Teams`, `Sessions`, `Transcripts`, `Summaries`, complete authentication `Auth` (JWT/bcrypt/RBAC), operational `/health` endpoint, **MongoDB connection via Mongoose**, **OpenAPI Swagger** interface at `/api`, and an automated **Vitest** test suite with 100% test pass rate.
+4. **Official 5-Phase Work Plan:** Documented in [19_backend_work_plan.md](19_backend_work_plan.md) and exported as an official APA 7 Word deliverable.
+5. **Roadmap Toward MVP Finalization:** Connect Chromium extension DOM scrapers to the batch transcript ingestion endpoint and conduct pilot evaluations across Universidad de Córdoba courses.
+
+---
+
+## Visual Resources and Attachments
+
+- **Official Work Plan in APA 7 Format (.docx):** [Work Plan - SICOCO Backend.docx](../Resources/Work%20Plan%20-%20SICOCO%20Backend.docx)
+- **Technical Document in APA 7 Format (.docx):** [Technical Document.docx](../Resources/Technical%20Document.docx)
+- **Entity-Relationship Diagram V2 (Dark):** [SICOCO v2.png](../Resources/SICOCO_v2.png)
+- **Entity-Relationship Diagram V2 (Light):** [SICOCO v2 (Light).png](../Resources/SICOCO_v2_Light.png)
+- **DBML Code V2:** [diagrama_bd_v2.dbml](../Resources/diagrama_bd_v2.dbml)
+- **Model PDF Document:** [MER - SICOCO.pdf](../Resources/MER%20-%20SICOCO.pdf)
+- **Initial Diagram (V1):** [DBDiagram.png](../Resources/DBDiagram.png) | [Modelo Relacion - Entidad V2.png](../Resources/Modelo%20Relacion%20-%20Entidad%20V2.png)
