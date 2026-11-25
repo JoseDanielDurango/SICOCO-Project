@@ -4,21 +4,21 @@ import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validato
 export class CreateUxEvaluationDto {
   @ApiProperty({
     example: '60d0fe4f5311236168a109cc',
-    description: 'ID del estudiante evaluador',
+    description: 'Evaluating student ID',
   })
   @IsString()
   studentId: string;
 
   @ApiProperty({
     example: '60d0fe4f5311236168a109cd',
-    description: 'ID de la sesión de trabajo contextualizada (U1-01)',
+    description: 'Contextualized work session ID (U1-01)',
   })
   @IsString()
   sessionId: string;
 
   @ApiProperty({
     example: 5,
-    description: 'Claridad visual de la interfaz del dashboard (escala 1 a 5)',
+    description: 'Visual clarity of dashboard interface (scale 1 to 5)',
   })
   @IsInt()
   @Min(1)
@@ -27,15 +27,15 @@ export class CreateUxEvaluationDto {
 
   @ApiPropertyOptional({
     example: true,
-    description: '¿Fue clara la separación visual por categorías y tareas?',
+    description: 'Was visual separation by categories and tasks clear?',
   })
   @IsOptional()
   @IsBoolean()
   taskSeparationClear?: boolean;
 
   @ApiPropertyOptional({
-    example: 'La vista de pestañas y el timeline facilitaron entender los acuerdos.',
-    description: 'Comentarios y sugerencias libres del usuario',
+    example: 'The tab views and timeline made it easy to understand agreements.',
+    description: 'Qualitative comments and feedback from student',
   })
   @IsOptional()
   @IsString()

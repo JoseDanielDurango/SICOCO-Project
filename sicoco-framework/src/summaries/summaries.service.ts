@@ -78,7 +78,11 @@ export class SummariesService {
           text.includes('de acuerdo') ||
           text.includes('defin') ||
           text.includes('aprob') ||
-          text.includes('consenso')
+          text.includes('consenso') ||
+          text.includes('agree') ||
+          text.includes('agreed') ||
+          text.includes('consensus') ||
+          text.includes('approve')
         ) {
           agreements.push({
             solutionDescription: msg.content,
@@ -92,11 +96,14 @@ export class SummariesService {
           text.includes('no me parece') ||
           text.includes('desacuerdo') ||
           text.includes('difiere') ||
-          text.includes('debate')
+          text.includes('debate') ||
+          text.includes('disagree') ||
+          text.includes('conflict') ||
+          text.includes('oppose')
         ) {
           disagreements.push({
             debateTopic: msg.content,
-            oppositionDescription: `Planteado por ${alias} en el diálogo`,
+            oppositionDescription: `Raised by ${alias} in dialogue`,
             resolutionStatus: 'Active',
           });
         }
@@ -106,11 +113,14 @@ export class SummariesService {
           text.includes('¿') ||
           text.includes('duda') ||
           text.includes('pregunta') ||
-          text.includes('cómo')
+          text.includes('cómo') ||
+          text.includes('doubt') ||
+          text.includes('question') ||
+          text.includes('how')
         ) {
           doubts.push({
             mainQuestion: msg.content,
-            relatedTopic: 'Tema en discusión',
+            relatedTopic: 'Topic under discussion',
             resolved: false,
           });
         }
@@ -120,7 +130,11 @@ export class SummariesService {
           text.includes('hacer') ||
           text.includes('encarg') ||
           text.includes('revisar') ||
-          text.includes('entrega')
+          text.includes('entrega') ||
+          text.includes('task') ||
+          text.includes('todo') ||
+          text.includes('action item') ||
+          text.includes('assign')
         ) {
           summaryTasks.push({
             activityTitle: msg.content,
@@ -143,12 +157,12 @@ export class SummariesService {
     if (agreements.length === 0) {
       agreements.push(
         {
-          solutionDescription: 'Consenso sobre adopción de NestJS y persistencia híbrida MongoDB',
+          solutionDescription: 'Consensus on NestJS adoption and hybrid MongoDB persistence',
           importanceLevel: 'High',
           proposedByAlias: 'Jose_D',
         },
         {
-          solutionDescription: 'Aprobación del formato de validación técnica U1-01',
+          solutionDescription: 'Approval of U1-01 technical validation format',
           importanceLevel: 'High',
           proposedByAlias: 'Jefersson_R',
         },
@@ -157,16 +171,16 @@ export class SummariesService {
 
     if (disagreements.length === 0) {
       disagreements.push({
-        debateTopic: 'Elección de motor de testing Jest vs Vitest',
-        oppositionDescription: 'Debate sobre rendimiento en ES Modules nativos',
+        debateTopic: 'Choice of testing engine Jest vs Vitest',
+        oppositionDescription: 'Debate on native ES Modules performance',
         resolutionStatus: 'Resolved',
       });
     }
 
     if (doubts.length === 0) {
       doubts.push({
-        mainQuestion: '¿Cómo integrar el streaming de respuestas con la extensión Chromium?',
-        relatedTopic: 'Integración Frontend',
+        mainQuestion: 'How to integrate response streaming with the Chromium extension?',
+        relatedTopic: 'Frontend Integration',
         resolved: false,
       });
     }
@@ -174,13 +188,13 @@ export class SummariesService {
     if (summaryTasks.length === 0) {
       summaryTasks.push(
         {
-          activityTitle: 'Construir controladores y servicios en sicoco-framework',
+          activityTitle: 'Build controllers and services in sicoco-framework',
           assignedToAlias: 'Jose_D',
           status: 'Completed',
           dueDate: new Date(Date.now() + 86400000 * 3),
         },
         {
-          activityTitle: 'Actualizar informe de requerimientos y documentación',
+          activityTitle: 'Update requirements report and documentation',
           assignedToAlias: 'Jesus_R',
           status: 'Pending',
           dueDate: new Date(Date.now() + 86400000 * 5),
@@ -193,13 +207,13 @@ export class SummariesService {
         {
           timestamp: new Date(),
           userAlias: 'Jose_D',
-          event: 'Propuesta de arquitectura técnica y persistencia',
+          event: 'Technical architecture and persistence proposal',
           connectedIdeaIds: ['idea_01'],
         },
         {
           timestamp: new Date(),
           userAlias: 'Jeyson_L',
-          event: 'Acuerdo grupal sobre cuatro pilares MODESEC',
+          event: 'Group agreement on four MODESEC pillars',
           connectedIdeaIds: ['idea_01', 'idea_02'],
         },
       );
@@ -212,7 +226,7 @@ export class SummariesService {
       style: generateDto.style ?? 'Formal',
       aiModelUsed: 'gemini-1.5-flash',
       tokenUsage: 1420 + allMessages.length * 45,
-      rawPlainText: `Síntesis generada automáticamente bajo metodología MODESEC basada en ${allMessages.length} intervenciones de chat.`,
+      rawPlainText: `Synthesis automatically generated under MODESEC methodology based on ${allMessages.length} chat interventions.`,
       agreements,
       disagreements,
       doubts,
@@ -226,7 +240,7 @@ export class SummariesService {
     for (const t of summaryTasks) {
       await this.taskModel.create({
         title: t.activityTitle,
-        description: `Tarea extraída automáticamente en síntesis MODESEC ${savedSummary._id}`,
+        description: `Task automatically extracted from MODESEC synthesis ${savedSummary._id}`,
         assignedStudentName: t.assignedToAlias,
         summaryId: (savedSummary as any)._id?.toString(),
         status: t.status === 'Completed' ? 'completed' : 'pending',

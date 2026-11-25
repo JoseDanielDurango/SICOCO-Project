@@ -9,10 +9,10 @@ export class UxEvaluation {
   studentId: string;
 
   @Prop({ required: true })
-  sessionId: string; // Contexto formal de la reunión analizada (U1-01)
+  sessionId: string; // Formal context of the analyzed meeting (U1-01)
 
   @Prop({ required: true, min: 1, max: 5 })
-  visualClarityRating: number; // Escala Likert 1 a 5
+  visualClarityRating: number; // Likert scale 1 to 5
 
   @Prop({ default: true })
   taskSeparationClear: boolean;

@@ -10,54 +10,54 @@ import { CreatePilotSurveyDto } from './dto/create-pilot-survey.dto.js';
 export class EvaluationsController {
   constructor(private readonly evaluationsService: EvaluationsService) {}
 
-  // --- Calidad y Precisión Técnica ---
+  // --- Quality and Technical Accuracy ---
   @Post('quality')
-  @ApiOperation({ summary: 'Registrar auditoría técnica docente de fidelidad (Control_Calidad_Bot)' })
-  @ApiResponse({ status: 201, description: 'Auditoría registrada exitosamente.' })
+  @ApiOperation({ summary: 'Record teacher technical fidelity audit (Control_Calidad_Bot)' })
+  @ApiResponse({ status: 201, description: 'Quality audit recorded successfully.' })
   createQualityAudit(@Body() createDto: CreateQualityAuditDto) {
     return this.evaluationsService.createQualityAudit(createDto);
   }
 
   @Get('quality')
-  @ApiOperation({ summary: 'Listar auditorías de calidad técnica' })
+  @ApiOperation({ summary: 'List technical quality audits' })
   @ApiQuery({ name: 'summaryId', required: false, type: String })
   findQualityAudits(@Query('summaryId') summaryId?: string) {
     return this.evaluationsService.findQualityAudits(summaryId);
   }
 
-  // --- Usabilidad UX ---
+  // --- Usability UX ---
   @Post('ux')
-  @ApiOperation({ summary: 'Registrar evaluación de usabilidad de interfaz por estudiante (Evaluacion_UX)' })
-  @ApiResponse({ status: 201, description: 'Evaluación UX guardada.' })
+  @ApiOperation({ summary: 'Record student UI usability evaluation (Evaluacion_UX)' })
+  @ApiResponse({ status: 201, description: 'UX evaluation saved successfully.' })
   createUxEvaluation(@Body() createDto: CreateUxEvaluationDto) {
     return this.evaluationsService.createUxEvaluation(createDto);
   }
 
   @Get('ux')
-  @ApiOperation({ summary: 'Listar evaluaciones de usabilidad UX' })
+  @ApiOperation({ summary: 'List UX usability evaluations' })
   @ApiQuery({ name: 'sessionId', required: false, type: String })
   findUxEvaluations(@Query('sessionId') sessionId?: string) {
     return this.evaluationsService.findUxEvaluations(sessionId);
   }
 
-  // --- Encuesta Piloto Formativa ---
+  // --- Formative Pilot Survey ---
   @Post('pilot')
-  @ApiOperation({ summary: 'Registrar encuesta piloto de utilidad educativa formativa (Encuesta_Piloto)' })
-  @ApiResponse({ status: 201, description: 'Encuesta piloto registrada.' })
+  @ApiOperation({ summary: 'Record pilot formative educational utility survey (Encuesta_Piloto)' })
+  @ApiResponse({ status: 201, description: 'Pilot survey recorded successfully.' })
   createPilotSurvey(@Body() createDto: CreatePilotSurveyDto) {
     return this.evaluationsService.createPilotSurvey(createDto);
   }
 
   @Get('pilot')
-  @ApiOperation({ summary: 'Listar respuestas de la encuesta piloto' })
+  @ApiOperation({ summary: 'List pilot survey responses' })
   @ApiQuery({ name: 'sessionId', required: false, type: String })
   findPilotSurveys(@Query('sessionId') sessionId?: string) {
     return this.evaluationsService.findPilotSurveys(sessionId);
   }
 
-  // --- Métricas Globales de MODESEC ---
+  // --- Consolidated MODESEC Metrics ---
   @Get('metrics')
-  @ApiOperation({ summary: 'Obtener métricas globales consolidadas de calidad, UX y utilidad formativa' })
+  @ApiOperation({ summary: 'Retrieve consolidated global metrics for quality, UX, and formative utility' })
   getGlobalMetrics() {
     return this.evaluationsService.getGlobalMetrics();
   }

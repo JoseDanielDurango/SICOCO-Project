@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'José Daniel Durango', description: 'User full name' })
+  @ApiProperty({ example: 'Jose Daniel Durango', description: 'User full name' })
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -48,7 +48,7 @@ export class RegisterDto {
   enrollmentNumber?: string;
 
   @ApiPropertyOptional({
-    example: 'Licenciatura en Informática',
+    example: 'Computer Science',
     description: 'Academic program',
   })
   @IsString()

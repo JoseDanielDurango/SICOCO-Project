@@ -6,7 +6,7 @@ export type PromptConfigurationDocument = PromptConfiguration & Document;
 @Schema({ timestamps: true, collection: 'prompt_configurations' })
 export class PromptConfiguration {
   @Prop({ required: true, trim: true })
-  styleName: string; // e.g., 'Formal / Académico', 'Rápido / Directo', 'Técnico Exhaustivo'
+  styleName: string; // e.g., 'Formal / Academic', 'Fast / Direct', 'Comprehensive Technical'
 
   @Prop({ required: true })
   systemPrompt: string; // Master instruction text sent to LLM

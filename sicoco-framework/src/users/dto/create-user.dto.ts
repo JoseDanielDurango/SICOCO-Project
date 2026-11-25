@@ -41,7 +41,7 @@ export class CreateUserDto {
   enrollmentNumber?: string;
 
   @ApiPropertyOptional({
-    example: 'Licenciatura en Informática',
+    example: 'Computer Science',
     description: 'Academic program',
   })
   @IsString()

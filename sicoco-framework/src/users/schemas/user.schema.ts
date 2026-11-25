@@ -22,7 +22,7 @@ export class User {
   @Prop({ required: false })
   enrollmentNumber?: string;
 
-  @Prop({ required: false, default: 'Licenciatura en Informática' })
+  @Prop({ required: false, default: 'Computer Science' })
   academicProgram?: string;
 
   @Prop({ required: false })

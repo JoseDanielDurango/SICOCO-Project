@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateSessionDto {
-  @ApiProperty({ description: 'Title or topic of the meeting session', example: 'Discusión Arquitectura Base de Datos' })
+  @ApiProperty({ description: 'Title or topic of the meeting session', example: 'Database Architecture Discussion' })
   title: string;
 
   @ApiPropertyOptional({ description: 'General objective of the meeting session' })

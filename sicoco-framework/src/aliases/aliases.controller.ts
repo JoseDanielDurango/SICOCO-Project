@@ -9,32 +9,32 @@ export class AliasesController {
   constructor(private readonly aliasesService: AliasesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Homologar alias de chat con estudiante oficial (U1-01)' })
-  @ApiResponse({ status: 201, description: 'Alias homologado con éxito.' })
+  @ApiOperation({ summary: 'Map chat alias to official university student (U1-01)' })
+  @ApiResponse({ status: 201, description: 'Alias successfully mapped.' })
   create(@Body() createDto: CreateAliasDto) {
     return this.aliasesService.create(createDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar catálogo de alias homologados' })
+  @ApiOperation({ summary: 'List mapped alias catalog' })
   findAll() {
     return this.aliasesService.findAll();
   }
 
   @Get('student/:studentId')
-  @ApiOperation({ summary: 'Consultar alias de un estudiante' })
+  @ApiOperation({ summary: 'Retrieve aliases for a student' })
   findByStudent(@Param('studentId') studentId: string) {
     return this.aliasesService.findByStudent(studentId);
   }
 
   @Get('resolve/:aliasText')
-  @ApiOperation({ summary: 'Resolver estudiante a partir del alias del chat' })
+  @ApiOperation({ summary: 'Resolve student from chat alias' })
   resolveAlias(@Param('aliasText') aliasText: string) {
     return this.aliasesService.resolveAlias(aliasText);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar homologación de alias' })
+  @ApiOperation({ summary: 'Delete alias mapping' })
   remove(@Param('id') id: string) {
     return this.aliasesService.remove(id);
   }

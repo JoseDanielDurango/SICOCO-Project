@@ -70,7 +70,7 @@ export class TimelineMoment {
   userAlias: string;
 
   @Prop({ required: true, trim: true })
-  event: string; // 'Idea Nueva', 'Solución', 'Debate'
+  event: string; // 'New Idea', 'Solution', 'Debate'
 
   @Prop({ type: [String], default: [] })
   connectedIdeaIds: string[];

@@ -49,7 +49,7 @@ export class AuthService {
       password: hashedPassword,
       role: registerDto.role ?? 'student',
       enrollmentNumber: registerDto.enrollmentNumber,
-      academicProgram: registerDto.academicProgram ?? 'Licenciatura en Informática',
+      academicProgram: registerDto.academicProgram ?? 'Computer Science',
       currentSemester: registerDto.currentSemester,
     });
 

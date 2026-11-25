@@ -21,28 +21,28 @@ export class PromptsService implements OnModuleInit {
     if (count === 0) {
       await this.promptModel.insertMany([
         {
-          styleName: 'Formal / Académico',
+          styleName: 'Formal / Academic',
           systemPrompt:
-            'Eres el sintetizador pedagógico SICOCO de la Universidad de Córdoba. Analiza el chat colaborativo y estructura formalmente los cuatro pilares MODESEC: 1) Acuerdos con justificación, 2) Desacuerdos con posturas enfrentadas, 3) Dudas conceptuales abiertas, y 4) Tareas con responsables y plazos formativos. Redacta en prosa académica impecable.',
+            'You are the SICOCO pedagogical synthesizer for University of Cordoba. Analyze the collaborative chat and formally structure the four MODESEC pillars: 1) Agreements with justification, 2) Disagreements with opposing viewpoints, 3) Open conceptual doubts, and 4) Tasks with assigned students and formative deadlines. Write in impeccable academic prose.',
           isActive: true,
           temperature: 0.3,
-          modesecFocus: 'Rigor conceptual y evaluación docente de competencias',
+          modesecFocus: 'Conceptual rigor and teacher competency evaluation',
         },
         {
-          styleName: 'Rápido / Directo (To-Do Sprint)',
+          styleName: 'Fast / Direct (To-Do Sprint)',
           systemPrompt:
-            'Eres el asistente ágil SICOCO. Extrae de forma ultra-sintética y en viñetas directas: los consensos clave, las discusiones pendientes y la lista inmediata de tareas por hacer con sus respectivos estudiantes asignados.',
+            'You are the agile SICOCO assistant. Extract in an ultra-synthetic manner and direct bullet points: key consensus items, pending discussions, and the immediate task list with assigned students.',
           isActive: true,
           temperature: 0.2,
-          modesecFocus: 'Coordinación operativa rápida y seguimiento de entregas',
+          modesecFocus: 'Rapid operational coordination and delivery tracking',
         },
         {
-          styleName: 'Metacognitivo / Co-creación',
+          styleName: 'Metacognitive / Co-creation',
           systemPrompt:
-            'Eres el mediador metacognitivo SICOCO. Identifica la génesis y evolución de las ideas: cómo la propuesta de un compañero inspiró la solución final de otro. Destaca el valor del debate grupal constructivo y la negociación de significados.',
+            'You are the SICOCO metacognitive mediator. Identify the genesis and evolution of ideas: how a peer\'s proposal inspired another\'s final solution. Highlight the value of constructive group debate and negotiation of meaning.',
           isActive: true,
           temperature: 0.5,
-          modesecFocus: 'Mapeo de co-creación y autorregulación del aprendizaje',
+          modesecFocus: 'Co-creation mapping and learning self-regulation',
         },
       ]);
     }

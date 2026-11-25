@@ -28,7 +28,7 @@ export class EvaluationsService {
     private readonly pilotSurveyModel: Model<PilotSurveyDocument>,
   ) {}
 
-  // --- 1. Auditoría de Calidad Técnica (Docente) ---
+  // --- 1. Teacher Technical Quality Audit ---
   async createQualityAudit(
     createDto: CreateQualityAuditDto,
   ): Promise<QualityAudit> {
@@ -41,7 +41,7 @@ export class EvaluationsService {
     return this.qualityAuditModel.find(query).sort({ createdAt: -1 }).exec();
   }
 
-  // --- 2. Evaluación de Usabilidad UX (Estudiante) ---
+  // --- 2. Student UX Usability Evaluation ---
   async createUxEvaluation(
     createDto: CreateUxEvaluationDto,
   ): Promise<UxEvaluation> {
@@ -54,7 +54,7 @@ export class EvaluationsService {
     return this.uxEvaluationModel.find(query).sort({ createdAt: -1 }).exec();
   }
 
-  // --- 3. Encuesta Piloto Formativa (Estudiante) ---
+  // --- 3. Formative Pilot Survey ---
   async createPilotSurvey(createDto: CreatePilotSurveyDto): Promise<PilotSurvey> {
     const created = new this.pilotSurveyModel(createDto);
     return created.save();
@@ -65,7 +65,7 @@ export class EvaluationsService {
     return this.pilotSurveyModel.find(query).sort({ createdAt: -1 }).exec();
   }
 
-  // --- 4. Métricas Consolidadas para Reportes Institucionales ---
+  // --- 4. Consolidated Metrics for Institutional Reporting ---
   async getGlobalMetrics(): Promise<{
     qualityAuditsCount: number;
     averageFidelityScore: number;

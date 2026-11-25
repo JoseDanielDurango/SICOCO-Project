@@ -9,13 +9,13 @@ export class PilotSurvey {
   studentId: string;
 
   @Prop({ required: true })
-  sessionId: string; // Contexto formal de la reunión analizada (U1-01)
+  sessionId: string; // Formal context of the analyzed meeting (U1-01)
 
   @Prop({ default: true })
   goalComprehensionImproved: boolean;
 
   @Prop({ required: true, min: 1, max: 5 })
-  groupSupportRating: number; // Escala Likert 1 a 5
+  groupSupportRating: number; // Likert scale 1 to 5
 
   @Prop({ default: '' })
   feedbackComments: string;

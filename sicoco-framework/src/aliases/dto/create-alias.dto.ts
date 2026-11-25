@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class CreateAliasDto {
   @ApiProperty({
     example: '60d0fe4f5311236168a109ca',
-    description: 'ID del estudiante universitario oficial',
+    description: 'Official university student ID',
   })
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateAliasDto {
 
   @ApiProperty({
     example: 'Jose_D',
-    description: 'Apodo o identificador que usa en WhatsApp o Discord',
+    description: 'Nickname or handle used in WhatsApp or Discord',
   })
   @IsString()
   @MinLength(2)
@@ -20,7 +20,7 @@ export class CreateAliasDto {
 
   @ApiProperty({
     example: 'whatsapp',
-    description: 'Plataforma donde se detecta este alias',
+    description: 'Platform where this alias was detected',
   })
   @IsString()
   @IsNotEmpty()

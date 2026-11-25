@@ -9,16 +9,16 @@ import {
 
 export class CreateTaskDto {
   @ApiProperty({
-    example: 'Implementar interfaz del dashboard en React',
-    description: 'Título descriptivo de la actividad académica asignada',
+    example: 'Implement dashboard interface in React',
+    description: 'Descriptive title of assigned academic task',
   })
   @IsString()
   @MinLength(3)
   title: string;
 
   @ApiPropertyOptional({
-    example: 'Construir vistas de pestañas y timeline de co-creación',
-    description: 'Detalles o especificaciones de la tarea',
+    example: 'Build tab views and co-creation timeline',
+    description: 'Task specifications and details',
   })
   @IsOptional()
   @IsString()
@@ -26,7 +26,7 @@ export class CreateTaskDto {
 
   @ApiPropertyOptional({
     example: '60d0fe4f5311236168a109ca',
-    description: 'ID de MongoDB del estudiante asignado',
+    description: 'MongoDB ID of assigned student',
   })
   @IsOptional()
   @IsString()
@@ -34,7 +34,7 @@ export class CreateTaskDto {
 
   @ApiPropertyOptional({
     example: 'Jose Daniel Durango',
-    description: 'Nombre o alias del estudiante responsable',
+    description: 'Name or alias of responsible student',
   })
   @IsOptional()
   @IsString()
@@ -42,7 +42,7 @@ export class CreateTaskDto {
 
   @ApiPropertyOptional({
     example: '60d0fe4f5311236168a109cb',
-    description: 'ID del equipo colaborativo al que pertenece la tarea',
+    description: 'ID of collaborative team owning the task',
   })
   @IsOptional()
   @IsString()
@@ -50,7 +50,7 @@ export class CreateTaskDto {
 
   @ApiPropertyOptional({
     example: '60d0fe4f5311236168a109cc',
-    description: 'ID del resumen MODESEC de donde provino la tarea',
+    description: 'ID of MODESEC summary originating the task',
   })
   @IsOptional()
   @IsString()
@@ -59,7 +59,7 @@ export class CreateTaskDto {
   @ApiPropertyOptional({
     example: 'pending',
     enum: ['pending', 'in_progress', 'completed', 'overdue'],
-    description: 'Estado del ciclo de vida de la tarea',
+    description: 'Task lifecycle status',
   })
   @IsOptional()
   @IsIn(['pending', 'in_progress', 'completed', 'overdue'])
@@ -68,7 +68,7 @@ export class CreateTaskDto {
   @ApiPropertyOptional({
     example: 'high',
     enum: ['low', 'medium', 'high'],
-    description: 'Nivel de prioridad de la tarea',
+    description: 'Task priority level',
   })
   @IsOptional()
   @IsIn(['low', 'medium', 'high'])
@@ -76,7 +76,7 @@ export class CreateTaskDto {
 
   @ApiPropertyOptional({
     example: '2026-12-05T23:59:59.000Z',
-    description: 'Fecha límite de entrega pactada por el equipo',
+    description: 'Agreed delivery deadline for the team',
   })
   @IsOptional()
   @IsDateString()

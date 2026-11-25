@@ -4,21 +4,21 @@ import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 export class CreateQualityAuditDto {
   @ApiProperty({
     example: '60d0fe4f5311236168a109ca',
-    description: 'ID de MongoDB del resumen evaluado',
+    description: 'MongoDB ID of the evaluated summary',
   })
   @IsString()
   summaryId: string;
 
   @ApiProperty({
     example: '60d0fe4f5311236168a109cb',
-    description: 'ID del docente responsable de la evaluación (U1-01)',
+    description: 'ID of the teacher responsible for the audit (U1-01)',
   })
   @IsString()
   professorId: string;
 
   @ApiPropertyOptional({
     example: 0,
-    description: 'Número de elementos incorrectamente categorizados por la IA',
+    description: 'Count of elements incorrectly categorized by the AI',
   })
   @IsOptional()
   @IsInt()
@@ -27,7 +27,7 @@ export class CreateQualityAuditDto {
 
   @ApiProperty({
     example: 9,
-    description: 'Puntuación de fidelidad textual y pertinencia (escala 1 a 10)',
+    description: 'Textual fidelity and relevance score (scale 1 to 10)',
   })
   @IsInt()
   @Min(1)
@@ -35,8 +35,8 @@ export class CreateQualityAuditDto {
   fidelityScore: number;
 
   @ApiPropertyOptional({
-    example: 'Excelente síntesis de los 4 pilares con correcta trazabilidad de tareas.',
-    description: 'Observaciones y comentarios técnicos del evaluador',
+    example: 'Excellent synthesis of the 4 pillars with accurate task traceability.',
+    description: 'Technical observations and critique from the reviewer',
   })
   @IsOptional()
   @IsString()

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class AgreementDto {
-  @ApiProperty({ description: 'Description of agreed decision', example: 'Adoptar arquitectura NestJS' })
+  @ApiProperty({ description: 'Description of agreed decision', example: 'Adopt NestJS architecture' })
   solutionDescription: string;
 
   @ApiPropertyOptional({ description: 'Importance level', default: 'High' })
@@ -12,7 +12,7 @@ export class AgreementDto {
 }
 
 export class DisagreementDto {
-  @ApiProperty({ description: 'Debate or conflict topic', example: 'Uso de PostgreSQL vs MongoDB' })
+  @ApiProperty({ description: 'Debate or conflict topic', example: 'PostgreSQL vs MongoDB usage' })
   debateTopic: string;
 
   @ApiPropertyOptional({ description: 'Detailed opposition points' })
@@ -23,7 +23,7 @@ export class DisagreementDto {
 }
 
 export class DoubtDto {
-  @ApiProperty({ description: 'Unresolved question', example: '¿Cómo limitamos el consumo de tokens?' })
+  @ApiProperty({ description: 'Unresolved question', example: 'How do we limit token consumption?' })
   mainQuestion: string;
 
   @ApiPropertyOptional({ description: 'Related thematic area' })
@@ -34,7 +34,7 @@ export class DoubtDto {
 }
 
 export class TaskDto {
-  @ApiProperty({ description: 'Action item title', example: 'Configurar conexión Mongoose' })
+  @ApiProperty({ description: 'Action item title', example: 'Configure Mongoose connection' })
   activityTitle: string;
 
   @ApiPropertyOptional({ description: 'Assigned student alias' })
@@ -57,7 +57,7 @@ export class TimelineMomentDto {
   @ApiProperty({ description: 'User alias' })
   userAlias: string;
 
-  @ApiProperty({ description: 'Event type', example: 'Propuesta de Base de Datos' })
+  @ApiProperty({ description: 'Event type', example: 'Database Architecture Proposal' })
   event: string;
 
   @ApiPropertyOptional({ description: 'IDs of connected or inspired ideas', type: [String] })

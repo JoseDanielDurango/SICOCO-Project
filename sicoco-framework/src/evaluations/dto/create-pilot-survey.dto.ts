@@ -4,21 +4,21 @@ import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validato
 export class CreatePilotSurveyDto {
   @ApiProperty({
     example: '60d0fe4f5311236168a109ce',
-    description: 'ID del estudiante participante',
+    description: 'Participating student ID',
   })
   @IsString()
   studentId: string;
 
   @ApiProperty({
     example: '60d0fe4f5311236168a109cf',
-    description: 'ID de la sesión de trabajo vinculada (U1-01)',
+    description: 'Linked work session ID (U1-01)',
   })
   @IsString()
   sessionId: string;
 
   @ApiPropertyOptional({
     example: true,
-    description: '¿Mejoró la comprensión de los objetivos y metas del grupo gracias a SICOCO?',
+    description: 'Did SICOCO improve understanding of group goals and milestones?',
   })
   @IsOptional()
   @IsBoolean()
@@ -26,7 +26,7 @@ export class CreatePilotSurveyDto {
 
   @ApiProperty({
     example: 5,
-    description: 'Percepción de apoyo al trabajo colaborativo en equipo (escala 1 a 5)',
+    description: 'Perception of support for collaborative teamwork (scale 1 to 5)',
   })
   @IsInt()
   @Min(1)
@@ -34,8 +34,8 @@ export class CreatePilotSurveyDto {
   groupSupportRating: number;
 
   @ApiPropertyOptional({
-    example: 'SICOCO nos ayudó a no perder las decisiones que tomamos en el chat de WhatsApp.',
-    description: 'Comentarios finales sobre la utilidad formativa',
+    example: 'SICOCO helped us keep track of decisions made in WhatsApp chat.',
+    description: 'Final comments on formative utility',
   })
   @IsOptional()
   @IsString()

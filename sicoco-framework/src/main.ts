@@ -36,7 +36,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Sicoco API')
     .setDescription(
-      'API documentation for SICOCO (Sintetizador de Co-creación Colaborativa) based on the MODESEC methodology.',
+      'API documentation for SICOCO (Collaborative Co-creation Synthesizer) based on the MODESEC methodology.',
     )
     .setVersion('1.0')
     .addBearerAuth()

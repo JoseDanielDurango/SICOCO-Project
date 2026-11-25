@@ -19,14 +19,14 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear una nueva tarea formativa colaborativa' })
-  @ApiResponse({ status: 201, description: 'Tarea creada con éxito.' })
+  @ApiOperation({ summary: 'Create a new collaborative formative task' })
+  @ApiResponse({ status: 201, description: 'Task created successfully.' })
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Consultar listado de tareas con filtros opcionales' })
+  @ApiOperation({ summary: 'Retrieve task list with optional filters' })
   @ApiQuery({ name: 'teamId', required: false, type: String })
   @ApiQuery({ name: 'studentId', required: false, type: String })
   @ApiQuery({ name: 'status', required: false, enum: ['pending', 'in_progress', 'completed', 'overdue'] })
@@ -41,26 +41,26 @@ export class TasksController {
   }
 
   @Get('metrics')
-  @ApiOperation({ summary: 'Obtener métricas y estadísticas de avance de tareas' })
+  @ApiOperation({ summary: 'Retrieve task progress statistics and metrics' })
   @ApiQuery({ name: 'teamId', required: false, type: String })
   getMetrics(@Query('teamId') teamId?: string) {
     return this.tasksService.getMetrics(teamId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Consultar tarea por ID' })
+  @ApiOperation({ summary: 'Retrieve task details by ID' })
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar atributos de la tarea' })
+  @ApiOperation({ summary: 'Update task attributes' })
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.tasksService.update(id, updateTaskDto);
   }
 
   @Patch(':id/status')
-  @ApiOperation({ summary: 'Cambiar el estado de la tarea (transición de avance)' })
+  @ApiOperation({ summary: 'Change task status (progress transition)' })
   updateStatus(
     @Param('id') id: string,
     @Body('status') status: 'pending' | 'in_progress' | 'completed' | 'overdue',
@@ -69,7 +69,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar una tarea' })
+  @ApiOperation({ summary: 'Delete a task' })
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);
   }

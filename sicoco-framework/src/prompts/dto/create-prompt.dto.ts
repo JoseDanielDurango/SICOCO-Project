@@ -11,8 +11,8 @@ import {
 
 export class CreatePromptDto {
   @ApiProperty({
-    example: 'Formal / Académico',
-    description: 'Nombre del estilo pedagógico de resumen',
+    example: 'Formal / Academic',
+    description: 'Pedagogical summary style name',
   })
   @IsString()
   @MinLength(3)
@@ -20,8 +20,8 @@ export class CreatePromptDto {
 
   @ApiProperty({
     example:
-      'Eres el asistente pedagógico SICOCO. Analiza el chat y clasifica estrictamente en los cuatro pilares MODESEC: Acuerdos, Desacuerdos, Dudas y Tareas.',
-    description: 'Instrucción matriz enviada al LLM',
+      'You are the SICOCO pedagogical assistant. Analyze the chat and strictly classify into the four MODESEC pillars: Agreements, Disagreements, Doubts, and Tasks.',
+    description: 'Master instruction sent to the LLM',
   })
   @IsString()
   @MinLength(20)
@@ -29,7 +29,7 @@ export class CreatePromptDto {
 
   @ApiPropertyOptional({
     example: true,
-    description: 'Indica si este estilo está activo para los estudiantes',
+    description: 'Indicates whether this style is active for students',
   })
   @IsOptional()
   @IsBoolean()
@@ -37,7 +37,7 @@ export class CreatePromptDto {
 
   @ApiPropertyOptional({
     example: 0.7,
-    description: 'Temperatura del modelo de lenguaje (0.0 a 2.0)',
+    description: 'Language model temperature (0.0 to 2.0)',
   })
   @IsOptional()
   @IsNumber()
@@ -46,8 +46,8 @@ export class CreatePromptDto {
   temperature?: number;
 
   @ApiPropertyOptional({
-    example: 'MODESEC Competencias Colaborativas',
-    description: 'Foco pedagógico principal del prompt',
+    example: 'MODESEC Collaborative Competencies',
+    description: 'Primary pedagogical focus of the prompt',
   })
   @IsOptional()
   @IsString()

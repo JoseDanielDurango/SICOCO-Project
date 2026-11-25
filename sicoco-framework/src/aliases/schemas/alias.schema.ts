@@ -9,7 +9,7 @@ export class StudentAlias {
   studentId: string;
 
   @Prop({ required: true, trim: true, unique: true })
-  aliasText: string; // Apodo, alias o número de WhatsApp usado en el chat
+  aliasText: string; // Nickname, alias or WhatsApp phone number used in chat
 
   @Prop({ default: 'whatsapp', trim: true })
   platformOrigin: string; // 'whatsapp' | 'discord' | 'teams'

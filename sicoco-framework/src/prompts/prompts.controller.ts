@@ -19,50 +19,50 @@ export class PromptsController {
   constructor(private readonly promptsService: PromptsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear nueva configuración de prompt maestro de IA' })
-  @ApiResponse({ status: 201, description: 'Configuración creada exitosamente.' })
+  @ApiOperation({ summary: 'Create new master AI prompt configuration' })
+  @ApiResponse({ status: 201, description: 'Prompt configuration created successfully.' })
   create(@Body() createPromptDto: CreatePromptDto) {
     return this.promptsService.create(createPromptDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar configuraciones de prompts' })
+  @ApiOperation({ summary: 'List prompt configurations' })
   @ApiQuery({
     name: 'activeOnly',
     required: false,
     type: Boolean,
-    description: 'Filtrar solo estilos activos',
+    description: 'Filter active styles only',
   })
   findAll(@Query('activeOnly') activeOnly?: boolean) {
     return this.promptsService.findAll(activeOnly);
   }
 
   @Get('default-active')
-  @ApiOperation({ summary: 'Obtener la configuración activa predeterminada' })
+  @ApiOperation({ summary: 'Retrieve default active prompt configuration' })
   findDefault() {
     return this.promptsService.findActiveDefault();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Consultar configuración de prompt por ID' })
+  @ApiOperation({ summary: 'Retrieve prompt configuration by ID' })
   findOne(@Param('id') id: string) {
     return this.promptsService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar configuración de prompt' })
+  @ApiOperation({ summary: 'Update prompt configuration' })
   update(@Param('id') id: string, @Body() updatePromptDto: UpdatePromptDto) {
     return this.promptsService.update(id, updatePromptDto);
   }
 
   @Patch(':id/toggle-active')
-  @ApiOperation({ summary: 'Alternar estado activo/inactivo del estilo' })
+  @ApiOperation({ summary: 'Toggle active/inactive state of prompt style' })
   toggleActive(@Param('id') id: string) {
     return this.promptsService.toggleActive(id);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar configuración de prompt' })
+  @ApiOperation({ summary: 'Delete prompt configuration' })
   remove(@Param('id') id: string) {
     return this.promptsService.remove(id);
   }
