@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { TeamsService } from './teams.service.js';
 import { CreateTeamDto, TeamMemberDto } from './dto/create-team.dto.js';
 import { UpdateTeamDto } from './dto/update-team.dto.js';
@@ -31,10 +31,32 @@ export class TeamsController {
     return this.teamsService.findAll(courseId);
   }
 
+  @Get(':id/metrics')
+  @ApiOperation({ summary: 'Retrieve team collaboration and roster metrics' })
+  getMetrics(@Param('id') id: string) {
+    return this.teamsService.getTeamMetrics(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve team details by ID' })
   findOne(@Param('id') id: string) {
     return this.teamsService.findOne(id);
+  }
+
+  @Patch(':id/approve')
+  @ApiOperation({ summary: 'Approve team formation and unblock teacher requirement' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { approved: { type: 'boolean', default: true } },
+    },
+    required: false,
+  })
+  approveTeam(
+    @Param('id') id: string,
+    @Body('approved') approved?: boolean,
+  ) {
+    return this.teamsService.approveTeam(id, approved ?? true);
   }
 
   @Patch(':id')

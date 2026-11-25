@@ -8,9 +8,12 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { TranscriptsService } from './transcripts.service.js';
-import { CreateTranscriptDto, ChatMessageDto } from './dto/create-transcript.dto.js';
+import {
+  CreateTranscriptDto,
+  ChatMessageDto,
+} from './dto/create-transcript.dto.js';
 import { UpdateTranscriptDto } from './dto/update-transcript.dto.js';
 
 @ApiTags('transcripts')
@@ -19,31 +22,62 @@ export class TranscriptsController {
   constructor(private readonly transcriptsService: TranscriptsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Ingest a chat transcript with extracted messages' })
+  @ApiOperation({ summary: 'Register a new chat transcript package' })
   create(@Body() createTranscriptDto: CreateTranscriptDto) {
     return this.transcriptsService.create(createTranscriptDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all transcripts (optionally filter by sessionId)' })
+  @ApiOperation({
+    summary: 'Retrieve transcripts (optionally filter by sessionId)',
+  })
   @ApiQuery({ name: 'sessionId', required: false })
   findAll(@Query('sessionId') sessionId?: string) {
     return this.transcriptsService.findAll(sessionId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve transcript details and full message list' })
+  @ApiOperation({ summary: 'Retrieve full transcript details with message log' })
   findOne(@Param('id') id: string) {
     return this.transcriptsService.findOne(id);
   }
 
   @Post(':id/messages')
-  @ApiOperation({ summary: 'Append newly scraped messages to an existing transcript' })
+  @ApiOperation({ summary: 'Append structured chat messages in bulk to transcript' })
+  @ApiBody({ type: [ChatMessageDto] })
   appendMessages(
     @Param('id') id: string,
-    @Body() newMessages: ChatMessageDto[],
+    @Body() messages: ChatMessageDto[],
   ) {
-    return this.transcriptsService.appendMessages(id, newMessages);
+    return this.transcriptsService.appendMessages(id, messages);
+  }
+
+  @Post(':id/parse-raw')
+  @ApiOperation({
+    summary: 'Ingest and parse raw text logs from WhatsApp or Discord',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        rawText: { type: 'string' },
+        platform: { type: 'string', default: 'WhatsApp' },
+      },
+      required: ['rawText'],
+    },
+  })
+  parseRaw(
+    @Param('id') id: string,
+    @Body('rawText') rawText: string,
+    @Body('platform') platform?: string,
+  ) {
+    return this.transcriptsService.parseRawChat(id, rawText, platform);
+  }
+
+  @Patch(':id/toggle-confidential')
+  @ApiOperation({ summary: 'Toggle confidentiality flag for student chat privacy' })
+  toggleConfidentiality(@Param('id') id: string) {
+    return this.transcriptsService.toggleConfidentiality(id);
   }
 
   @Patch(':id')

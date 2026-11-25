@@ -41,6 +41,7 @@ logs/
 Thumbs.db
 .temp
 .tmp
+scratch/
 
 # Editor & IDE Settings
 .vscode/*

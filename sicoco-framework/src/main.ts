@@ -49,8 +49,12 @@ async function bootstrap() {
     .addTag('transcripts', 'Chat message and conversation transcript ingestion')
     .addTag(
       'summaries',
-      'MODESEC synthesis engine (Agreements, Disagreements, Doubts, Tasks and Timeline)',
+      'MODESEC synthesis engine (Agreements, Disagreements, Doubts, Tasks, and Timeline)',
     )
+    .addTag('prompts', 'Master prompt configurations and synthesis profiles (MODESEC Zone 3)')
+    .addTag('tasks', 'Collaborative task management (To-Do), assignments, and progress tracking')
+    .addTag('evaluations', 'Quality audits, UX evaluations, and educational pilot surveys (MODESEC Zone 4)')
+    .addTag('aliases', 'Chat alias resolution and student account mapping (U1-01)')
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

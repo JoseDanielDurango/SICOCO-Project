@@ -29,6 +29,45 @@ export class TeamsService {
     return team;
   }
 
+  async approveTeam(id: string, approved: boolean = true): Promise<Team> {
+    const team = await this.findOne(id);
+    team.requiresTeacherApproval = false;
+    team.isActive = approved;
+    return this.teamModel
+      .findByIdAndUpdate(
+        id,
+        { requiresTeacherApproval: false, isActive: approved },
+        { new: true },
+      )
+      .exec() as Promise<Team>;
+  }
+
+  async getTeamMetrics(id: string): Promise<{
+    teamId: string;
+    name: string;
+    memberCount: number;
+    rolesDistribution: Record<string, number>;
+    isActive: boolean;
+    requiresTeacherApproval: boolean;
+  }> {
+    const team = await this.findOne(id);
+    const rolesDistribution: Record<string, number> = {};
+
+    for (const m of team.members || []) {
+      const role = m.role || 'Member';
+      rolesDistribution[role] = (rolesDistribution[role] || 0) + 1;
+    }
+
+    return {
+      teamId: id,
+      name: team.name,
+      memberCount: (team.members || []).length,
+      rolesDistribution,
+      isActive: team.isActive,
+      requiresTeacherApproval: team.requiresTeacherApproval,
+    };
+  }
+
   async update(id: string, updateTeamDto: UpdateTeamDto): Promise<Team> {
     const updated = await this.teamModel
       .findByIdAndUpdate(id, updateTeamDto, { new: true })

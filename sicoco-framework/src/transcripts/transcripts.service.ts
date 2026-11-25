@@ -65,6 +65,79 @@ export class TranscriptsService {
       .exec() as Promise<Transcript>;
   }
 
+  async parseRawChat(
+    id: string,
+    rawText: string,
+    platform: string = 'WhatsApp',
+  ): Promise<Transcript> {
+    const lines = rawText
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+    const newMessages: ChatMessageDto[] = [];
+
+    for (const line of lines) {
+      // Format 1: [DD/MM/YYYY, HH:MM:SS] Sender: Message
+      const bracketMatch = line.match(/^\[([^\]]+)\]\s*([^:]+):\s*(.+)$/);
+      if (bracketMatch) {
+        newMessages.push({
+          senderAlias: bracketMatch[2].trim(),
+          content: bracketMatch[3].trim(),
+          timestamp: new Date(),
+        });
+        continue;
+      }
+
+      // Format 2: DD/MM/YYYY, HH:MM - Sender: Message
+      const dashMatch = line.match(
+        /^([0-9\/\., -]+(?:AM|PM|am|pm)?)\s*-\s*([^:]+):\s*(.+)$/,
+      );
+      if (dashMatch) {
+        newMessages.push({
+          senderAlias: dashMatch[2].trim(),
+          content: dashMatch[3].trim(),
+          timestamp: new Date(),
+        });
+        continue;
+      }
+
+      // Format 3: Sender: Message
+      const colonMatch = line.match(/^([a-zA-Z0-9_\-\. ]{2,30}):\s*(.+)$/);
+      if (colonMatch) {
+        newMessages.push({
+          senderAlias: colonMatch[1].trim(),
+          content: colonMatch[2].trim(),
+          timestamp: new Date(),
+        });
+        continue;
+      }
+
+      if (newMessages.length > 0) {
+        newMessages[newMessages.length - 1].content += '\n' + line;
+      } else {
+        newMessages.push({
+          senderAlias: 'Unknown',
+          content: line,
+          timestamp: new Date(),
+        });
+      }
+    }
+
+    return this.appendMessages(id, newMessages);
+  }
+
+  async toggleConfidentiality(id: string): Promise<Transcript> {
+    const transcript = await this.findOne(id);
+    transcript.isConfidential = !transcript.isConfidential;
+    return this.transcriptModel
+      .findByIdAndUpdate(
+        id,
+        { isConfidential: transcript.isConfidential },
+        { new: true },
+      )
+      .exec() as Promise<Transcript>;
+  }
+
   async update(
     id: string,
     updateTranscriptDto: UpdateTranscriptDto,

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Session, SessionDocument } from './schemas/session.schema.js';
@@ -28,6 +28,37 @@ export class SessionsService {
       throw new NotFoundException(`Session with id ${id} not found`);
     }
     return session;
+  }
+
+  async updateStatus(id: string, status: string): Promise<Session> {
+    const validStatuses = ['Planned', 'Active', 'Completed', 'Archived'];
+    if (!validStatuses.includes(status)) {
+      throw new BadRequestException(
+        `Invalid status '${status}'. Must be one of: ${validStatuses.join(', ')}`,
+      );
+    }
+    const session = await this.sessionModel
+      .findByIdAndUpdate(id, { status }, { new: true })
+      .exec();
+    if (!session) {
+      throw new NotFoundException(`Session with id ${id} not found`);
+    }
+    return session;
+  }
+
+  async getSessionPacket(id: string): Promise<{
+    session: Session;
+    durationMinutes: number;
+    status: string;
+    isReadyForSynthesis: boolean;
+  }> {
+    const session = await this.findOne(id);
+    return {
+      session,
+      durationMinutes: session.estimatedDurationMinutes || 60,
+      status: session.status,
+      isReadyForSynthesis: session.status === 'Completed' || session.status === 'Active',
+    };
   }
 
   async update(id: string, updateSessionDto: UpdateSessionDto): Promise<Session> {

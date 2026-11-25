@@ -13,7 +13,7 @@ Durante el **9no semestre**, el proyecto SICOCO trascendió formalmente la fase 
 
 Para garantizar un backend robusto, escalable, tipado y mantenible, se estructuró la solución sobre el framework **NestJS** en su versión más moderna (v12), utilizando **TypeScript** con arquitectura nativa de módulos ECMAScript (`"type": "module"`). La persistencia de datos se apoya en **MongoDB** a través de **Mongoose**, implementando una arquitectura de capas con separación estricta de responsabilidades: Controladores, Servicios, Objetos de Transferencia de Datos (DTOs) y Esquemas de Datos.
 
-El backend cuenta con **6 módulos funcionales y operativos** que cubren la totalidad de las 4 zonas del modelo relacional V2 de MODESEC:
+El backend cuenta con **10 módulos funcionales y operativos** que cubren la totalidad de las 4 zonas del modelo relacional V2 de MODESEC y el perímetro de seguridad:
 
 ```mermaid
 graph TD
@@ -23,6 +23,10 @@ graph TD
     AppMod --> Mongo["MongooseModule (MongoDB Connection)"]
     AppMod --> Obs["ObserveModule (@nestjs/observe)"]
     
+    subgraph Sec ["Seguridad Perimetral"]
+        AppMod --> AuthMod["AuthModule (/auth)"]
+    end
+
     subgraph Z1 ["Zona 1: Organización Académica"]
         AppMod --> UsersMod["UsersModule (/users)"]
         AppMod --> CoursesMod["CoursesModule (/courses)"]
@@ -36,14 +40,14 @@ graph TD
 
     subgraph Z3Z4 ["Zonas 3 y 4: Síntesis MODESEC y Co-creación"]
         AppMod --> SummariesMod["SummariesModule (/summaries)"]
+        AppMod --> PromptsMod["PromptsModule (/prompts)"]
+        AppMod --> TasksMod["TasksModule (/tasks)"]
     end
 
-    UsersMod --> UsersCtrl["UsersController"] --> UsersSvc["UsersService"] --> UserSchema["UserSchema"]
-    CoursesMod --> CoursesCtrl["CoursesController"] --> CoursesSvc["CoursesService"] --> CourseSchema["CourseSchema"]
-    TeamsMod --> TeamsCtrl["TeamsController"] --> TeamsSvc["TeamsService"] --> TeamSchema["TeamSchema"]
-    SessionsMod --> SessionsCtrl["SessionsController"] --> SessionsSvc["SessionsService"] --> SessionSchema["SessionSchema"]
-    TranscriptsMod --> TranscriptsCtrl["TranscriptsController"] --> TranscriptsSvc["TranscriptsService"] --> TranscriptSchema["TranscriptSchema"]
-    SummariesMod --> SummariesCtrl["SummariesController"] --> SummariesSvc["SummariesService"] --> SummarySchema["SummarySchema"]
+    subgraph Z5 ["Evaluación, Calidad y Alias"]
+        AppMod --> EvalMod["EvaluationsModule (/evaluations)"]
+        AppMod --> AliasMod["AliasesModule (/aliases)"]
+    end
 ```
 
 ---
@@ -324,32 +328,44 @@ await bootstrap();
 Para superar las limitaciones de rendimiento del runner Jest tradicional, el proyecto implementó **Vitest v4.1.2** configurado con soporte nativo para ES Modules y TypeScript:
 
 ### 5.1. Pruebas Unitarias (`*.spec.ts`)
-Cada uno de los 6 módulos dispone de suites completas de pruebas unitarias aisladas utilizando mocks de Mongoose mediante `@nestjs/testing` y `getModelToken()`:
+Cada uno de los 10 módulos dispone de suites completas de pruebas unitarias aisladas utilizando mocks de Mongoose mediante `@nestjs/testing` y `getModelToken()`:
 1. `app.controller.spec.ts`
-2. `users/users.controller.spec.ts`
-3. `users/users.service.spec.ts`
-4. `courses/courses.controller.spec.ts`
-5. `courses/courses.service.spec.ts`
-6. `teams/teams.controller.spec.ts`
-7. `teams/teams.service.spec.ts`
-8. `sessions/sessions.controller.spec.ts`
-9. `sessions/sessions.service.spec.ts`
-10. `transcripts/transcripts.controller.spec.ts`
-11. `transcripts/transcripts.service.spec.ts`
-12. `summaries/summaries.controller.spec.ts`
-13. `summaries/summaries.service.spec.ts`
+2. `auth/auth.controller.spec.ts`
+3. `auth/auth.service.spec.ts`
+4. `auth/guards/jwt-auth.guard.spec.ts`
+5. `auth/guards/roles.guard.spec.ts`
+6. `users/users.controller.spec.ts`
+7. `users/users.service.spec.ts`
+8. `courses/courses.controller.spec.ts`
+9. `courses/courses.service.spec.ts`
+10. `teams/teams.controller.spec.ts`
+11. `teams/teams.service.spec.ts`
+12. `sessions/sessions.controller.spec.ts`
+13. `sessions/sessions.service.spec.ts`
+14. `transcripts/transcripts.controller.spec.ts`
+15. `transcripts/transcripts.service.spec.ts`
+16. `summaries/summaries.controller.spec.ts`
+17. `summaries/summaries.service.spec.ts`
+18. `prompts/prompts.controller.spec.ts`
+19. `prompts/prompts.service.spec.ts`
+20. `tasks/tasks.controller.spec.ts`
+21. `tasks/tasks.service.spec.ts`
+22. `evaluations/evaluations.controller.spec.ts`
+23. `evaluations/evaluations.service.spec.ts`
+24. `aliases/aliases.controller.spec.ts`
+25. `aliases/aliases.service.spec.ts`
 
-**Resultado:** 13 suites ejecutadas, **13 aprobadas al 100% (0 fallos)** en menos de 2.5 segundos.
+**Resultado:** 25 suites ejecutadas, **25 aprobadas al 100% (32 pruebas individuales sin fallos)** en menos de 9.5 segundos.
 
 ### 5.2. Pruebas de Integración y E2E (`vitest.config.e2e.ts`)
-Configurado para ejecutar pruebas de integración completas mediante `supertest`, validando que la aplicación responda a solicitudes HTTP reales en `test/app.e2e-spec.ts`.
+Configurado para ejecutar pruebas de integración completas mediante `supertest`, validando que la aplicación responda a solicitudes HTTP reales en `test/app.e2e-spec.ts` (GET / y GET /health) y `test/auth.e2e-spec.ts` (ciclo completo de registro, login, emisión de JWT, RBAC por perfiles y actualización de contraseñas con 11 pruebas aprobadas).
 
 ### 5.3. Pipeline de Comandos
 El equipo dispone de scripts automatizados en `package.json`:
 - `npm run start:dev`: Levanta el servidor con recarga en caliente (`watch`) y variables desde `.env`.
-- `npm run build`: Compila el proyecto TypeScript a la carpeta `dist/`.
-- `npm run test`: Ejecuta la suite de 13 pruebas unitarias con Vitest.
-- `npm run test:e2e`: Ejecuta las pruebas de extremo a extremo.
+- `npm run build`: Compila el proyecto TypeScript a la carpeta `dist/` en modo ESM.
+- `npm run test`: Ejecuta las 25 suites de pruebas unitarias con Vitest.
+- `npm run test:e2e`: Ejecuta las 2 suites de pruebas de extremo a extremo.
 - `npm run lint`: Ejecuta el linter ultrarrápido `oxlint` con validación estricta de tipos.
 - `npm run format`: Aplica formateo consistente con Prettier en `src/` y `test/`.
 
@@ -357,10 +373,10 @@ El equipo dispone de scripts automatizados en `package.json`:
 
 ## 6. Integración y Próximos Pasos de Implementación
 
-Con los **6 módulos operativos** integrados en el backend, la arquitectura cubre la totalidad de las 4 zonas de datos de SICOCO. Los siguientes pasos inmediatos comprenden:
-1. **Conexión de la Extensión Chromium:** Consumir el endpoint `POST /transcripts/:id/messages` desde el content script inyectado en WhatsApp Web y Discord.
-2. **Conexión del LLM en Tiempo Real:** Reemplazar el motor de simulación de `SummariesService.generate()` con llamadas directas a la API de **Google Gemini** (vía SDK `@google/genai` o REST API) inyectando la ingeniería de prompts de `Configuracion_Prompt`.
-3. **Mecanismo de WebSockets (Opcional):** Implementar `@nestjs/websockets` con Socket.IO para notificaciones push en tiempo real en reemplazo o complemento del polling de `GET /summaries/job/:jobId`.
+Con los **10 módulos operativos** integrados en el backend, la arquitectura cubre la totalidad de las 4 zonas de datos de SICOCO y el cierre pedagógico. Los siguientes pasos inmediatos para el X Semestre comprenden:
+1. **Conexión de la Extensión Chromium:** Consumir los endpoints `POST /transcripts/:id/messages` y `POST /transcripts/:id/parse-raw` desde el content script inyectado en WhatsApp Web y Discord.
+2. **Conexión del LLM en Tiempo Real:** Reemplazar el motor heurístico de `SummariesService.generate()` con llamadas directas por streaming a la API de **Google Gemini** inyectando las plantillas de `PromptsModule`.
+3. **Mecanismo de WebSockets:** Implementar `@nestjs/websockets` con Socket.IO para notificaciones push en tiempo real cuando se generen síntesis o se actualicen tareas grupales.
 
 
 ---
@@ -383,7 +399,7 @@ During the **9th semester**, the SICOCO project formally transitioned from theor
 
 To deliver a robust, scalable, typed, and maintainable backend, the solution was built on modern **NestJS** (v12), leveraging **TypeScript** with native ECMAScript Modules (`"type": "module"`). Data persistence relies on **MongoDB** orchestrated via **Mongoose**, implementing a layered architecture with strict separation of concerns: Controllers, Services, Data Transfer Objects (DTOs), and Schemas.
 
-The backend features **operational modules and enterprise security** spanning all 4 zones of the MODESEC V2 relational architecture:
+The backend features **10 operational modules and enterprise security** spanning all 4 zones of the MODESEC V2 relational architecture and pedagogical evaluation:
 
 ```mermaid
 graph TD
@@ -393,6 +409,10 @@ graph TD
     AppMod --> Mongo["MongooseModule (MongoDB Connection)"]
     AppMod --> Obs["ObserveModule (@nestjs/observe)"]
     
+    subgraph Sec ["Perimeter Security"]
+        AppMod --> AuthMod["AuthModule (/auth)"]
+    end
+
     subgraph Z1 ["Zone 1: Academic Organization"]
         AppMod --> UsersMod["UsersModule (/users)"]
         AppMod --> CoursesMod["CoursesModule (/courses)"]
@@ -406,14 +426,14 @@ graph TD
 
     subgraph Z3Z4 ["Zones 3 & 4: MODESEC Synthesis & Co-Creation"]
         AppMod --> SummariesMod["SummariesModule (/summaries)"]
+        AppMod --> PromptsMod["PromptsModule (/prompts)"]
+        AppMod --> TasksMod["TasksModule (/tasks)"]
     end
 
-    UsersMod --> UsersCtrl["UsersController"] --> UsersSvc["UsersService"] --> UserSchema["UserSchema"]
-    CoursesMod --> CoursesCtrl["CoursesController"] --> CoursesSvc["CoursesService"] --> CourseSchema["CourseSchema"]
-    TeamsMod --> TeamsCtrl["TeamsController"] --> TeamsSvc["TeamsService"] --> TeamSchema["TeamSchema"]
-    SessionsMod --> SessionsCtrl["SessionsController"] --> SessionsSvc["SessionsService"] --> SessionSchema["SessionSchema"]
-    TranscriptsMod --> TranscriptsCtrl["TranscriptsController"] --> TranscriptsSvc["TranscriptsService"] --> TranscriptSchema["TranscriptSchema"]
-    SummariesMod --> SummariesCtrl["SummariesController"] --> SummariesSvc["SummariesService"] --> SummarySchema["SummarySchema"]
+    subgraph Z5 ["Evaluation, Quality & Aliases"]
+        AppMod --> EvalMod["EvaluationsModule (/evaluations)"]
+        AppMod --> AliasMod["AliasesModule (/aliases)"]
+    end
 ```
 
 ---
@@ -684,31 +704,43 @@ await bootstrap();
 Replacing legacy Jest runners, the backend adopts **Vitest v4.1.2** with native TypeScript and ES Modules support:
 
 ### 5.1. Unit Testing Suites (`*.spec.ts`)
-Each module maintains isolated unit tests leveraging Mongoose mocks via `@nestjs/testing` and `getModelToken()`:
+Each of the 10 modules maintains isolated unit tests leveraging Mongoose mocks via `@nestjs/testing` and `getModelToken()`:
 1. `app.controller.spec.ts`
-2. `users/users.controller.spec.ts`
-3. `users/users.service.spec.ts`
-4. `courses/courses.controller.spec.ts`
-5. `courses/courses.service.spec.ts`
-6. `teams/teams.controller.spec.ts`
-7. `teams/teams.service.spec.ts`
-8. `sessions/sessions.controller.spec.ts`
-9. `sessions/sessions.service.spec.ts`
-10. `transcripts/transcripts.controller.spec.ts`
-11. `transcripts/transcripts.service.spec.ts`
-12. `summaries/summaries.controller.spec.ts`
-13. `summaries/summaries.service.spec.ts`
+2. `auth/auth.controller.spec.ts`
+3. `auth/auth.service.spec.ts`
+4. `auth/guards/jwt-auth.guard.spec.ts`
+5. `auth/guards/roles.guard.spec.ts`
+6. `users/users.controller.spec.ts`
+7. `users/users.service.spec.ts`
+8. `courses/courses.controller.spec.ts`
+9. `courses/courses.service.spec.ts`
+10. `teams/teams.controller.spec.ts`
+11. `teams/teams.service.spec.ts`
+12. `sessions/sessions.controller.spec.ts`
+13. `sessions/sessions.service.spec.ts`
+14. `transcripts/transcripts.controller.spec.ts`
+15. `transcripts/transcripts.service.spec.ts`
+16. `summaries/summaries.controller.spec.ts`
+17. `summaries/summaries.service.spec.ts`
+18. `prompts/prompts.controller.spec.ts`
+19. `prompts/prompts.service.spec.ts`
+20. `tasks/tasks.controller.spec.ts`
+21. `tasks/tasks.service.spec.ts`
+22. `evaluations/evaluations.controller.spec.ts`
+23. `evaluations/evaluations.service.spec.ts`
+24. `aliases/aliases.controller.spec.ts`
+25. `aliases/aliases.service.spec.ts`
 
-**Outcome:** 100% pass rate across all test suites in under 2.5 seconds.
+**Outcome:** 25 suites executed, **25 passed at 100% (32 individual tests without failure)** in under 9.5 seconds.
 
 ### 5.2. Integration and E2E Testing (`vitest.config.e2e.ts`)
-Executes integration testing via `supertest` validating HTTP routing, status codes, and JSON responses in `test/app.e2e-spec.ts` and `test/auth.e2e-spec.ts`.
+Executes integration testing via `supertest` validating HTTP routing, status codes, and JSON responses in `test/app.e2e-spec.ts` (GET / and GET /health) and `test/auth.e2e-spec.ts` (complete lifecycle: register, login, JWT issuance, profile retrieval, RBAC authorization boundaries, and password rotation with 11 passed tests).
 
 ### 5.3. Command Pipeline
 - `npm run start:dev`: Launches development server with hot-reloading (`watch`) and `.env` support.
-- `npm run build`: Compiles TypeScript codebase into `dist/`.
-- `npm run test`: Executes unit test suites with Vitest.
-- `npm run test:e2e`: Runs end-to-end integration tests.
+- `npm run build`: Compiles TypeScript codebase into `dist/` with native ESM.
+- `npm run test`: Executes the 25 unit test suites with Vitest.
+- `npm run test:e2e`: Runs end-to-end integration tests (2 suites).
 - `npm run lint`: Runs next-generation `oxlint` linter with strict type checks.
 - `npm run format`: Standardizes code formatting with Prettier across `src/` and `test/`.
 
@@ -716,7 +748,7 @@ Executes integration testing via `supertest` validating HTTP routing, status cod
 
 ## 6. Next Steps and Implementation Roadmap
 
-With **operational modules** integrated into the backend, the architecture fully models all 4 SICOCO data zones. Immediate steps include:
-1. **Chromium Extension Hookup:** Connect content scrapers to the `POST /transcripts/:id/messages` endpoint.
-2. **Real-time LLM API Integration:** Bind `SummariesService.generate()` directly to the **Google Gemini API** injecting master prompt templates.
+With **10 operational modules** integrated into the backend, the architecture fully models all 4 SICOCO data zones and the pedagogical evaluation closure. Immediate steps for Semester X include:
+1. **Chromium Extension Hookup:** Connect content scrapers to the `POST /transcripts/:id/messages` and `POST /transcripts/:id/parse-raw` endpoints.
+2. **Real-time LLM API Integration:** Bind `SummariesService.generate()` directly to the **Google Gemini API** with dynamic prompt injection from the `prompts` module.
 3. **WebSockets Push Layer:** Add `@nestjs/websockets` with Socket.IO for real-time status notifications alongside polling.

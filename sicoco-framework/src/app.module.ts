@@ -11,6 +11,10 @@ import { TeamsModule } from './teams/teams.module.js';
 import { SessionsModule } from './sessions/sessions.module.js';
 import { TranscriptsModule } from './transcripts/transcripts.module.js';
 import { SummariesModule } from './summaries/summaries.module.js';
+import { PromptsModule } from './prompts/prompts.module.js';
+import { TasksModule } from './tasks/tasks.module.js';
+import { EvaluationsModule } from './evaluations/evaluations.module.js';
+import { AliasesModule } from './aliases/aliases.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -42,6 +46,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     SessionsModule,
     TranscriptsModule,
     SummariesModule,
+    PromptsModule,
+    TasksModule,
+    EvaluationsModule,
+    AliasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

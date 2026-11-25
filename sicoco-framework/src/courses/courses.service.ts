@@ -16,8 +16,23 @@ export class CoursesService {
     return createdCourse.save();
   }
 
-  async findAll(): Promise<Course[]> {
-    return this.courseModel.find().exec();
+  async findAll(semester?: string, isActive?: boolean): Promise<Course[]> {
+    const query: Record<string, any> = {};
+    if (semester) {
+      query.academicSemester = semester;
+    }
+    if (isActive !== undefined) {
+      query.isActive = isActive;
+    }
+    return this.courseModel.find(query).exec();
+  }
+
+  async findByCode(code: string): Promise<Course> {
+    const course = await this.courseModel.findOne({ code }).exec();
+    if (!course) {
+      throw new NotFoundException(`Course with code ${code} not found`);
+    }
+    return course;
   }
 
   async findOne(id: string): Promise<Course> {
@@ -26,6 +41,14 @@ export class CoursesService {
       throw new NotFoundException(`Course with ID ${id} not found`);
     }
     return course;
+  }
+
+  async toggleActive(id: string): Promise<Course> {
+    const course = await this.findOne(id);
+    course.isActive = !course.isActive;
+    return this.courseModel
+      .findByIdAndUpdate(id, { isActive: course.isActive }, { new: true })
+      .exec() as Promise<Course>;
   }
 
   async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {

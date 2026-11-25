@@ -505,6 +505,258 @@
           }
         }
       ]
+    },
+    {
+      "name": "Prompts & Master LLM Templates",
+      "item": [
+        {
+          "name": "Get Active Prompts (Pre-seeded MODESEC)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/prompts/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prompts",
+                "active"
+              ]
+            },
+            "description": "Retrieves currently active MODESEC prompts (Formal, Fast, Metacognitive)."
+          }
+        },
+        {
+          "name": "List All Prompts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/prompts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prompts"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Custom Prompt Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"styleName\": \"Socr\\u00e1tico / Reflexivo\",\n  \"systemPrompt\": \"Eres un tutor socr\\u00e1tico que sintetiza debates estudiantiles formulando preguntas metacognitivas.\",\n  \"temperature\": 0.4,\n  \"modesecFocus\": \"Dudas y Debates\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/prompts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prompts"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks & Formative Commitments",
+      "item": [
+        {
+          "name": "Get Task Global & Team Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tasks/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tasks",
+                "metrics"
+              ]
+            },
+            "description": "Calculates total tasks, completion rate, pending tasks, and overdue tasks."
+          }
+        },
+        {
+          "name": "List Tasks (Filtered by Team or Status)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tasks?status=pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Collaborative Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Dise\\u00f1ar casos de prueba para el m\\u00f3dulo de evaluaciones\",\n  \"description\": \"Elaborar la matriz de validaci\\u00f3n con estudiantes del 9no semestre.\",\n  \"assignedStudentName\": \"Jefersson_R\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2026-12-05T23:59:59.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tasks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evaluations & Alias Resolution",
+      "item": [
+        {
+          "name": "Register Teacher Quality Audit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"summaryId\": \"65b9f1234567890abcdef123\",\n  \"professorId\": \"65b9f0000000000000000001\",\n  \"falsePositivesCount\": 0,\n  \"fidelityScore\": 95,\n  \"technicalCritique\": \"Excelente concordancia con los acuerdos del equipo estudiantil.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/evaluations/quality-audit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations",
+                "quality-audit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Student UX Evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"65b9f9999999999999999999\",\n  \"sessionId\": \"65b9f1111111111111111111\",\n  \"visualClarityRating\": 5,\n  \"taskSeparationClear\": true,\n  \"qualitativeFeedback\": \"La separaci\\u00f3n entre acuerdos y tareas facilita enormemente el trabajo.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/evaluations/ux-survey",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations",
+                "ux-survey"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Global Evaluation & UX Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/evaluations/metrics/global",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations",
+                "metrics",
+                "global"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Student Chat Alias",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"65b9f9999999999999999999\",\n  \"aliasText\": \"Jose_D\",\n  \"platformOrigin\": \"WhatsApp\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/aliases",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "aliases"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Resolve Alias to Student Record",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/aliases/resolve/Jose_D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "aliases",
+                "resolve",
+                "Jose_D"
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
